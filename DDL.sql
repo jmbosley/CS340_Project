@@ -10,7 +10,7 @@ CREATE OR REPLACE TABLE Artists
         email varchar(145) NOT NULL,
         averageRating INT,
         completedCount INT NOT NULL,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
+        -- Unique Email
         PRIMARY KEY (artistID),
         UNIQUE (email)
 );
@@ -68,7 +68,7 @@ CREATE OR REPLACE TABLE Reviews
         FOREIGN KEY (customerID) REFERENCES Customers(customerID)
 );
 
--- Intermediate Tables
+-- Intersection Tables
 CREATE OR REPLACE TABLE ArtistGenres(
 	artistGenreID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
@@ -125,3 +125,42 @@ CREATE OR REPLACE TABLE ArtistReviews(
 
 
 -- Sample Data INSERT statements
+-- Entity Tables
+-- Insert Into Artists
+INSERT INTO Artists (email, averageRating, completedCount)
+	VALUES('JaneDoe@gmail.com', 0,0), ('ghostShipGames@gmail.com', 5, 1);
+-- Insert Into Customers
+INSERT INTO Customers (email, name, birthday, totalOrders)
+	VALUES('JoeShmow@yahoo.com','Joe Shmow', '1965-04-16',0), ('wWilson@hotmail.com', 'Wade Wilson', NULL, 1);
+-- Insert into Genres
+INSERT INTO Genres(type)
+	VALUES('Steampunk');
+-- Insert into Mediums
+INSERT INTO Mediums(type)
+	VALUES('Oil Painting');
+-- Insert into Commissions
+INSERT INTO Comissions(requestStatus, dateRequested, dateCompleted, price, customerID)
+	VALUES('Request Complete', '2020-01-16','2020-11-19', 12.32, (SELECT customerID from Customers WHERE email='wWilson@hotmail.com'));
+-- Insert into Reviews
+INSERT INTO Reviews(starValue, reviewText, reviewDate, customerID)
+	VALUES(5,'This artists was great to work with', '2020-11-19',(SELECT customerID from Customers WHERE email='wWilson@hotmail.com'));
+
+-- Interaction Tables
+-- Insert Into ArtistGenres
+INSERT INTO ArtistGenres(artistID, genreID)
+	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'),(SELECT genreID from Genres WHERE type='Steampunk'));
+-- Insert Into ArtistMediums
+INSERT INTO ArtistMediums(artistID, mediumID)
+	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'),(SELECT mediumID from Mediums WHERE type='Oil Painting'));
+-- Insert Into CommissionMediums
+INSERT INTO CommissionMediums(commissionID, mediumID)
+	VALUES((SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=1),(SELECT mediumID from Mediums WHERE type='Oil Painting')); -- need to come up with query to search customerID by email
+-- Insert Into CommissionGenres
+INSERT INTO CommissionGenres(commissionID,genreID)
+	VALUES((SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=1),(SELECT genreID from Genres WHERE type='Steampunk')); -- need to come up with query to search customerID by email
+-- Insert Into ArtistComissions
+INSERT INTO ArtistComissions(artistID,commissionID)
+	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'),(SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=2)); -- need to come up with query to search customerID by email
+-- Insert Into ArtistReviews
+INSERT INTO ArtistReviews(artistID, reviewID)
+	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=2));-- need to come up with query to search customerID by email
