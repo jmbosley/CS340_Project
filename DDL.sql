@@ -52,75 +52,75 @@ CREATE OR REPLACE TABLE Commissions
         price DECIMAL(65,2),
         customerID INT,
         -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
-        PRIMARY KEY (commissionID)
-        FOREIGN KEY (customerID) REFERENCES Customers(customerID),
+        PRIMARY KEY (commissionID),
+        FOREIGN KEY (customerID) REFERENCES Customers(customerID)
 );
 
 CREATE OR REPLACE TABLE Reviews 
 	(
         reviewID int AUTO_INCREMENT,
         starValue INT NOT NULL,
-        reviewText VARCHAR(250)
+        reviewText VARCHAR(250),
         reviewDate DATE NOT NULL,
         customerID INT,
         -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
-        PRIMARY KEY (reviewID)
-        FOREIGN KEY (customerID) REFERENCES Customers(customerID),
+        PRIMARY KEY (reviewID),
+        FOREIGN KEY (customerID) REFERENCES Customers(customerID)
 );
 
 -- Intermediate Tables
 CREATE OR REPLACE TABLE ArtistGenres(
-	artistGenreID INT,
+	artistGenreID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
-	genreID INT,	
+	genreID INT,
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID),
 	FOREIGN KEY (genreID) REFERENCES Genres(genreID),
-	PRIMARY KEY (artistGenreID) REFERENCES(artistID, genreID)
+	PRIMARY KEY (artistGenreID)
 );
 
 CREATE OR REPLACE TABLE ArtistMediums(
-	artistMediumID INT,
+	artistMediumID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
 	mediumID INT,	
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID),
 	FOREIGN KEY (mediumID) REFERENCES Mediums(mediumID),
-	PRIMARY KEY (artistMediumID) REFERENCES(artistID, mediumID)
+	PRIMARY KEY (artistMediumID)
 );
 
 CREATE OR REPLACE TABLE CommissionMediums(
-	commissionMediumID INT,
+	commissionMediumID INT NOT NULL AUTO_INCREMENT,
 	commissionID INT,
 	mediumID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID),
 	FOREIGN KEY (mediumID) REFERENCES Mediums(mediumID),
-	PRIMARY KEY (commissionMediumID) REFERENCES(commissionID, mediumID)
+	PRIMARY KEY (commissionMediumID)
 );
 
 CREATE OR REPLACE TABLE CommissionGenres(
-	commissionMediumID INT,
+	commissionMediumID INT NOT NULL AUTO_INCREMENT,
 	commissionID INT,
 	genreID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID),
 	FOREIGN KEY (genreID) REFERENCES Genres(genreID),
-	PRIMARY KEY (commissionMediumID) REFERENCES(commissionID, genreID)
+	PRIMARY KEY (commissionMediumID)
 );
 
 CREATE OR REPLACE TABLE ArtistComissions(
-	artistCommissionID INT,
+	artistCommissionID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
 	commissionID INT,
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID),
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID),
-	PRIMARY KEY (artistCommissionID) REFERENCES(commissionID, artistID)
+	PRIMARY KEY (artistCommissionID)
 );
 
 CREATE OR REPLACE TABLE ArtistReviews(
-	artistReviewsID INT,
+	artistReviewsID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
 	reviewID INT,
 	FOREIGN KEY (reviewID) REFERENCES Reviews(reviewID),
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID),
-	PRIMARY KEY (artistReviewsID) REFERENCES(commissionID, artistID)
+	PRIMARY KEY (artistReviewsID)
 );
 
 
