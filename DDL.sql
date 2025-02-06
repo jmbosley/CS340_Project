@@ -12,7 +12,7 @@ CREATE OR REPLACE TABLE Artists
 	(
         artistID int AUTO_INCREMENT,
         email varchar(145) NOT NULL,
-		name varchar(145) NOT NULL,
+	name varchar(145) NOT NULL,
         averageRating DECIMAL(2,1),
         completedCount INT NOT NULL,
         -- Unique Email
@@ -27,7 +27,6 @@ CREATE OR REPLACE TABLE Customers
         name VARCHAR(145) NOT NULL,
         birthday DATE,
         totalOrders INT NOT NULL,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
         PRIMARY KEY (customerID),
         UNIQUE (email)
 );
@@ -36,7 +35,6 @@ CREATE OR REPLACE TABLE Genres
 	(
         genreID int AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
         PRIMARY KEY (genreID)
 );
 
@@ -44,7 +42,6 @@ CREATE OR REPLACE TABLE Mediums
 	(
         mediumID int AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
         PRIMARY KEY (mediumID)
 );
 
@@ -56,7 +53,6 @@ CREATE OR REPLACE TABLE Commissions
         dateCompleted DATE,
         price DECIMAL(9,2) NOT NULL,
         customerID INT,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
         PRIMARY KEY (commissionID),
         FOREIGN KEY (customerID) REFERENCES Customers(customerID)
 			ON DELETE CASCADE -- if the foreign key is deleted it will be deleted here too
@@ -70,7 +66,6 @@ CREATE OR REPLACE TABLE Reviews
         reviewText VARCHAR(250),
         reviewDate DATE NOT NULL,
         customerID INT,
-        -- The combination of the first_name and last_name must be unique in this table. Name this constraint as full_name 
         PRIMARY KEY (reviewID),
         FOREIGN KEY (customerID) REFERENCES Customers(customerID)
 			ON DELETE CASCADE
@@ -202,8 +197,7 @@ INSERT INTO CommissionMediums(commissionID, mediumID)
 -- Insert Into CommissionGenres
 INSERT INTO CommissionGenres(commissionID,genreID)
 	-- joe
-	VALUES((SELECT commissionID from Commissions WHERE dateRequested='2017-07-22' AND customerID=1), (SELECT genreID from Genres WHERE type='Steampunk')), -- need to come up with query to search customerID by email
-	-- wade
+	VALUES((SELECT commissionID from Commissions WHERE dateRequested='2017-07-22' AND customerID=1), (SELECT genreID from Genres WHERE type='Steampunk')),
 	((SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=2), (SELECT genreID from Genres WHERE type='Horror')),
 	-- bob
 	((SELECT commissionID from Commissions WHERE dateRequested='2021-10-02' AND customerID=3), (SELECT genreID from Genres WHERE type='Cute')),
@@ -216,7 +210,7 @@ INSERT INTO ArtistCommissions(artistID,commissionID)
 	-- wade, peter
 	((SELECT artistID from Artists WHERE email='ghostShipGames@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=2)),
 	-- bob, betty
-	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2021-10-02' AND customerID=3)); -- need to come up with query to search customerID by email
+	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2021-10-02' AND customerID=3)); 
 
 -- Insert Into ArtistReviews
 INSERT INTO ArtistReviews(artistID, reviewID)
@@ -225,7 +219,6 @@ INSERT INTO ArtistReviews(artistID, reviewID)
 	-- wade reviews peter
 	((SELECT artistID from Artists WHERE email='ghostShipGames@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=2 AND reviewDate='2020-11-19')),
 	-- bob reviews betty
-	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=3 AND reviewDate='2021-11-05')); -- need to come up with query to search customerID by email
-
+	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=3 AND reviewDate='2021-11-05')); 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
