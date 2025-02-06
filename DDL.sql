@@ -211,20 +211,20 @@ INSERT INTO CommissionGenres(commissionID,genreID)
 
 -- Insert Into ArtistComissions
 INSERT INTO ArtistCommissions(artistID,commissionID)
-	-- joe reviews jane
+	-- joe, jane
 	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2017-07-22' AND customerID=1)),
-	-- wade reviews peter
+	-- wade, peter
 	((SELECT artistID from Artists WHERE email='ghostShipGames@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2020-01-16' AND customerID=2)),
-	-- bob reviews betty
+	-- bob, betty
 	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'), (SELECT commissionID from Commissions WHERE dateRequested='2021-10-02' AND customerID=3)); -- need to come up with query to search customerID by email
 
 -- Insert Into ArtistReviews
 INSERT INTO ArtistReviews(artistID, reviewID)
-	-- jane and joe
+	-- joe reviews jane
 	VALUES((SELECT artistID from Artists WHERE email='JaneDoe@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=1 AND reviewDate='2017-08-02')),
-	-- peter and wade
+	-- wade reviews peter
 	((SELECT artistID from Artists WHERE email='ghostShipGames@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=2 AND reviewDate='2020-11-19')),
-	-- betty and bob
+	-- bob reviews betty
 	((SELECT artistID from Artists WHERE email='watercolorlover@gmail.com'),(SELECT reviewID from Reviews WHERE customerID=3 AND reviewDate='2021-11-05')); -- need to come up with query to search customerID by email
 
 SET FOREIGN_KEY_CHECKS=1;
