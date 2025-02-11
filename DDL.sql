@@ -1,6 +1,6 @@
---Anna Connelly: Co-Captain
---Julie Bosley: Co-Captain
---Team Name: Team 143
+-- Anna Connelly: Co-Captain
+-- Julie Bosley: Co-Captain
+-- Team Name: Team 143
 
 -- Data Definition Queries
 -- Entity Tables
