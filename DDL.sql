@@ -10,7 +10,7 @@ SET AUTOCOMMIT = 0;
 
 CREATE OR REPLACE TABLE Artists 
 	(
-        artistID int AUTO_INCREMENT,
+        artistID int NOT NULL AUTO_INCREMENT,
         email varchar(145) NOT NULL,
 		name varchar(145) NOT NULL,
         completedCount INT NOT NULL,
@@ -21,7 +21,7 @@ CREATE OR REPLACE TABLE Artists
 
 CREATE OR REPLACE TABLE Customers 
 	(
-        customerID int AUTO_INCREMENT,
+        customerID int NOT NULL AUTO_INCREMENT,
         email varchar(145) NOT NULL,
         name VARCHAR(145) NOT NULL,
         birthday DATE,
@@ -32,21 +32,21 @@ CREATE OR REPLACE TABLE Customers
 
 CREATE OR REPLACE TABLE Genres 
 	(
-        genreID int AUTO_INCREMENT,
+        genreID int NOT NULL AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
         PRIMARY KEY (genreID)
 );
 
 CREATE OR REPLACE TABLE Mediums 
 	(
-        mediumID int AUTO_INCREMENT,
+        mediumID int NOT NULL AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
         PRIMARY KEY (mediumID)
 );
 
 CREATE OR REPLACE TABLE Commissions 
 	(
-        commissionID int AUTO_INCREMENT,
+        commissionID int NOT NULL AUTO_INCREMENT,
         requestStatus VARCHAR(145) NOT NULL,
         dateRequested DATETIME NOT NULL, -- format: 1000-01-01 00:00:00
         dateCompleted DATE,
