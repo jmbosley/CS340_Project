@@ -47,7 +47,7 @@ CREATE OR REPLACE TABLE Mediums
 CREATE OR REPLACE TABLE Commissions 
 	(
         commissionID int NOT NULL AUTO_INCREMENT,
-        requestStatus VARCHAR(145) NOT NULL,
+        requestStatus ENUM("Request Unclaimed", "Request Claimed", "Request Complete", "Request Cancelled") NOT NULL, -- index starts at 1
         dateRequested DATETIME NOT NULL, -- format: 1000-01-01 00:00:00
         dateCompleted DATE,
         price DECIMAL(9,2) NOT NULL,
@@ -141,11 +141,11 @@ INSERT INTO Mediums(type)
 
 -- Insert into Commissions
 INSERT INTO Commissions(requestStatus, dateRequested, dateCompleted, price, customerID)
-	VALUES('Request Complete', '2017-07-22 02:10:02', '2017-08-02', 50.00, (SELECT customerID from Customers WHERE email='JoeShmow@yahoo.com')),
-	('Request Complete', '2018-02-02 12:01:05', '2018-03-20', 75.00, (SELECT customerID from Customers WHERE email='JoeShmow@yahoo.com')), -- new joe, betty
-	('Request Complete', '2020-01-16 10:22:32', '2020-11-19', 12.32, (SELECT customerID from Customers WHERE email='wWilson@hotmail.com')),
-	('Request Complete', '2021-10-02 07:18:00', '2021-11-05', 20.00, (SELECT customerID from Customers WHERE email='bobTheArtLover@gmail.com')),
-	('Request Unclaimed', '2021-12-20 20:00:02', NULL, 95.50, (SELECT customerID from Customers WHERE email='bobTheArtLover@gmail.com'));
+	VALUES(3, '2017-07-22 02:10:02', '2017-08-02', 50.00, (SELECT customerID from Customers WHERE email='JoeShmow@yahoo.com')),
+	(3, '2018-02-02 12:01:05', '2018-03-20', 75.00, (SELECT customerID from Customers WHERE email='JoeShmow@yahoo.com')), -- new joe, betty
+	(3, '2020-01-16 10:22:32', '2020-11-19', 12.32, (SELECT customerID from Customers WHERE email='wWilson@hotmail.com')),
+	(3, '2021-10-02 07:18:00', '2021-11-05', 20.00, (SELECT customerID from Customers WHERE email='bobTheArtLover@gmail.com')),
+	(1, '2021-12-20 20:00:02', NULL, 95.50, (SELECT customerID from Customers WHERE email='bobTheArtLover@gmail.com'));
 
 -- Interaction Tables
 -- Insert Into ArtistGenres
