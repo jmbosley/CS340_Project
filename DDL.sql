@@ -58,6 +58,7 @@ CREATE OR REPLACE TABLE Commissions
 );
 
 -- Intersection Tables
+-- Shows which genres artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistGenres(
 	artistGenreID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
@@ -69,6 +70,7 @@ CREATE OR REPLACE TABLE ArtistGenres(
 	PRIMARY KEY (artistGenreID)
 );
 
+-- Shows which mediums artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistMediums(
 	artistMediumID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
@@ -80,6 +82,7 @@ CREATE OR REPLACE TABLE ArtistMediums(
 	PRIMARY KEY (artistMediumID)
 );
 
+-- Shows which mediums are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionMediums(
 	commissionMediumID INT NOT NULL AUTO_INCREMENT,
 	commissionID INT,
@@ -91,6 +94,7 @@ CREATE OR REPLACE TABLE CommissionMediums(
 	PRIMARY KEY (commissionMediumID)
 );
 
+-- Shows which genres are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionGenres(
 	commissionGenreID INT NOT NULL AUTO_INCREMENT,
 	commissionID INT,
@@ -102,6 +106,7 @@ CREATE OR REPLACE TABLE CommissionGenres(
 	PRIMARY KEY (commissionGenreID)
 );
 
+-- Shows which commissions artists are working on
 CREATE OR REPLACE TABLE ArtistCommissions(
 	artistCommissionID INT NOT NULL AUTO_INCREMENT,
 	artistID INT,
