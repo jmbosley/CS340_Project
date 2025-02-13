@@ -10,18 +10,18 @@ SET AUTOCOMMIT = 0;
 
 CREATE OR REPLACE TABLE Artists 
 	(
-        artistID int NOT NULL AUTO_INCREMENT,
+        artistID int AUTO_INCREMENT,
         email varchar(145) NOT NULL,
 		name varchar(145) NOT NULL,
         completedCount INT NOT NULL,
-        -- Unique Email
         PRIMARY KEY (artistID),
+		-- Unique Email
         UNIQUE (email)
 );
 
 CREATE OR REPLACE TABLE Customers 
 	(
-        customerID int NOT NULL AUTO_INCREMENT,
+        customerID int AUTO_INCREMENT,
         email varchar(145) NOT NULL,
         name VARCHAR(145) NOT NULL,
         birthday DATE,
@@ -32,21 +32,21 @@ CREATE OR REPLACE TABLE Customers
 
 CREATE OR REPLACE TABLE Genres 
 	(
-        genreID int NOT NULL AUTO_INCREMENT,
+        genreID int AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
         PRIMARY KEY (genreID)
 );
 
 CREATE OR REPLACE TABLE Mediums 
 	(
-        mediumID int NOT NULL AUTO_INCREMENT,
+        mediumID int AUTO_INCREMENT,
         type VARCHAR(145) NOT NULL,
         PRIMARY KEY (mediumID)
 );
 
 CREATE OR REPLACE TABLE Commissions 
 	(
-        commissionID int NOT NULL AUTO_INCREMENT,
+        commissionID int AUTO_INCREMENT,
         requestStatus ENUM("Request Unclaimed", "Request Claimed", "Request Complete", "Request Cancelled") NOT NULL, -- index starts at 1
         dateRequested DATETIME NOT NULL, -- format: 1000-01-01 00:00:00
         dateCompleted DATE,
@@ -60,7 +60,7 @@ CREATE OR REPLACE TABLE Commissions
 -- Intersection Tables
 -- Shows which genres artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistGenres(
-	artistGenreID INT NOT NULL AUTO_INCREMENT,
+	artistGenreID INT AUTO_INCREMENT,
 	artistID INT,
 	genreID INT,
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID)
@@ -72,7 +72,7 @@ CREATE OR REPLACE TABLE ArtistGenres(
 
 -- Shows which mediums artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistMediums(
-	artistMediumID INT NOT NULL AUTO_INCREMENT,
+	artistMediumID INT AUTO_INCREMENT,
 	artistID INT,
 	mediumID INT,	
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID)
@@ -84,7 +84,7 @@ CREATE OR REPLACE TABLE ArtistMediums(
 
 -- Shows which mediums are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionMediums(
-	commissionMediumID INT NOT NULL AUTO_INCREMENT,
+	commissionMediumID INT AUTO_INCREMENT,
 	commissionID INT,
 	mediumID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
@@ -96,7 +96,7 @@ CREATE OR REPLACE TABLE CommissionMediums(
 
 -- Shows which genres are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionGenres(
-	commissionGenreID INT NOT NULL AUTO_INCREMENT,
+	commissionGenreID INT AUTO_INCREMENT,
 	commissionID INT,
 	genreID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
@@ -108,7 +108,7 @@ CREATE OR REPLACE TABLE CommissionGenres(
 
 -- Shows which commissions artists are working on
 CREATE OR REPLACE TABLE ArtistCommissions(
-	artistCommissionID INT NOT NULL AUTO_INCREMENT,
+	artistCommissionID INT AUTO_INCREMENT,
 	artistID INT,
 	commissionID INT,
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
