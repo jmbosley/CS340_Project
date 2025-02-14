@@ -1,3 +1,6 @@
+SET FOREIGN_KEY_CHECKS=0;
+SET AUTOCOMMIT = 0;
+
 INSERT INTO Artists (email, name, completedCount)
 	VALUES(:artistEmailInput, :artistNameInput:, :completedCountInput)
 
@@ -116,6 +119,12 @@ WHERE genreID= :character_ID_from_the_update_form;
 -- Edit Mediums
 UPDATE Mediums SET type = :mediumTypeInput
 WHERE mediumID= :character_ID_from_the_update_form;
+
+-- Delete from Genres
+DELETE FROM Genres WHERE Genres.genreID = (SELECT Genres.genreID FROM Genres WHERE Genres.type=:genreTypeInput);
+
+-- Delete from Mediums
+DELETE FROM Mediums WHERE Mediums.mediumID = (SELECT Mediums.mediumID FROM Mediums WHERE Mediums.type=:mediumTypeInput);
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
