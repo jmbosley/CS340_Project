@@ -45,10 +45,10 @@ INSERT INTO ArtistCommissions(artistID,commissionID)
 -- Artists Page
 SELECT Artists.artistID as "Artist ID",  Artists.email as "Email", Artists.name as "Full Name", Artists.completedCount as "Commissions Completed", Genres.type as "Genres", Mediums.type as "Mediums"
 FROM Artists
-INNER JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID
-INNER JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID
-INNER JOIN Genres ON ArtistGenres.genreID = Genres.genreID
-INNER JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID;
+LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID
+LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID
+LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID
+LEFT JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID;
 
 -- Customers Page
 SELECT Customers.customerID as "Customer ID", Customers.email as "Email", Customers.name as "Name", Customers.birthday as "Birthday", Customers.totalOrders as "Total Commissions"
@@ -58,15 +58,30 @@ FROM Customers;
 SELECT Commissions.commissionID as "Commission ID", Artists.artistID as "Artist ID", Commissions.requestStatus as "Request Status", Genres.type as "Genres", Mediums.type as "Mediums", Commissions.dateRequested as "Date Requested",
 Commissions.dateCompleted as "Date Completed", Commissions.price as "Price", Customers.customerID as "Customer IDs"
 FROM Commissions
-INNER JOIN ArtistCommissions ON Commissions.commissionID = ArtistCommissions.commissionID
-INNER JOIN Artists ON ArtistCommissions.artistID = Artists.artistID
-INNER JOIN CommissionGenres ON Commissions.commissionID = CommissionGenres.commissionID
-INNER JOIN Genres ON CommissionGenres.genreID = Genres.genreID
-INNER JOIN CommissionMediums ON Commissions.commissionID = CommissionMediums.commissionID
-INNER JOIN Mediums ON CommissionMediums.mediumID = Mediums.mediumID
-INNER JOIN Customers ON Commissions.customerID = Customers.customerID;
+LEFT JOIN ArtistCommissions ON Commissions.commissionID = ArtistCommissions.commissionID
+LEFT JOIN Artists ON ArtistCommissions.artistID = Artists.artistID
+LEFT JOIN CommissionGenres ON Commissions.commissionID = CommissionGenres.commissionID
+LEFT JOIN Genres ON CommissionGenres.genreID = Genres.genreID
+LEFT JOIN CommissionMediums ON Commissions.commissionID = CommissionMediums.commissionID
+LEFT JOIN Mediums ON CommissionMediums.mediumID = Mediums.mediumID
+LEFT JOIN Customers ON Commissions.customerID = Customers.customerID;
 
-Commission ID	Artist ID	Request Status	Genres	Mediums	Date Requested	Date Completed	Price	Customer IDs	Edit
+-- Genres
+SELECT Genres.genreID as "Genre ID", Genres.type as "Type", IFNULL(COUNT(Genres.genreID = ArtistGenres.genreID), 0) AS "Artist Count", IFNULL(COUNT(Genres.genreID = CommissionGenres.genreID), 0) AS "Commission Count"
+FROM Genres
+LEFT JOIN ArtistGenres ON Genres.genreID = ArtistGenres.genreID
+LEFT JOIN CommissionGenres ON Genres.genreID = CommissionGenres.genreID
+GROUP BY Genres.genreID;
+
+-- Mediums
+SELECT Mediums.mediumID as "Medium ID", Mediums.type as "Type", IFNULL(COUNT(Mediums.mediumID = ArtistMediums.mediumID), 0) AS "Artist Count", IFNULL(COUNT(Mediums.mediumID = CommissionMediums.mediumID), 0) AS "Commission Count"
+FROM Mediums
+LEFT JOIN ArtistMediums ON Mediums.mediumID = ArtistMediums.mediumID
+LEFT JOIN CommissionMediums ON Mediums.mediumID = CommissionMediums.mediumID
+GROUP BY Mediums.mediumID;
+
+
+genreID	type	Artist Count	Commission Count
 
 
 SET FOREIGN_KEY_CHECKS=1;
