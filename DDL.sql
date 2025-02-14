@@ -61,7 +61,7 @@ CREATE OR REPLACE TABLE Commissions
 -- Shows which genres artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistGenres(
 	artistGenreID INT AUTO_INCREMENT,
-	artistID INT,
+	artistID INT NOT NULL,
 	genreID INT,
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID)
 		ON DELETE CASCADE,
@@ -73,7 +73,7 @@ CREATE OR REPLACE TABLE ArtistGenres(
 -- Shows which mediums artists have chosen to work with
 CREATE OR REPLACE TABLE ArtistMediums(
 	artistMediumID INT AUTO_INCREMENT,
-	artistID INT,
+	artistID INT NOT NULL,
 	mediumID INT,	
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID)
 		ON DELETE CASCADE,
@@ -85,7 +85,7 @@ CREATE OR REPLACE TABLE ArtistMediums(
 -- Shows which mediums are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionMediums(
 	commissionMediumID INT AUTO_INCREMENT,
-	commissionID INT,
+	commissionID INT NOT NULL,
 	mediumID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
 		ON DELETE CASCADE,
@@ -97,7 +97,7 @@ CREATE OR REPLACE TABLE CommissionMediums(
 -- Shows which genres are relevant to which commissions
 CREATE OR REPLACE TABLE CommissionGenres(
 	commissionGenreID INT AUTO_INCREMENT,
-	commissionID INT,
+	commissionID INT NOT NULL,
 	genreID INT,	
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
 		ON DELETE CASCADE,
@@ -109,8 +109,8 @@ CREATE OR REPLACE TABLE CommissionGenres(
 -- Shows which commissions artists are working on
 CREATE OR REPLACE TABLE ArtistCommissions(
 	artistCommissionID INT AUTO_INCREMENT,
-	artistID INT,
-	commissionID INT,
+	artistID INT NOT NULL,
+	commissionID INT NOT NULL,
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
 		ON DELETE CASCADE,
 	FOREIGN KEY (artistID) REFERENCES Artists(artistID)
