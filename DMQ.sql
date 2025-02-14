@@ -41,5 +41,14 @@ INSERT INTO ArtistCommissions(artistID,commissionID)
 	VALUES((SELECT artistID from Artists WHERE Artists.email=:artistEmailInput),
     (SELECT commissionID from Commissions WHERE Commissions.dateRequested=:dateRequestedInput AND customerID=(SELECT customerID from Customers WHERE Customers.name=:customerNameInput));
 
+-- Selections
+SELECT Artists.artistID as "Artist ID",  Artists.email as "Email", Artists.name as "Full Name", Artists.completedCount as "Commissions Completed", Genres.type as "Genres", Mediums.type as "Mediums"
+FROM Artists
+INNER JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID
+INNER JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID
+INNER JOIN Genres ON ArtistGenres.genreID = Genres.genreID
+INNER JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID;
+
+
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
