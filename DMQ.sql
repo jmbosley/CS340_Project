@@ -80,9 +80,42 @@ LEFT JOIN ArtistMediums ON Mediums.mediumID = ArtistMediums.mediumID
 LEFT JOIN CommissionMediums ON Mediums.mediumID = CommissionMediums.mediumID
 GROUP BY Mediums.mediumID;
 
+-- Update
+-- Edit Artists
+UPDATE Artists SET email = :artistEmailInput, name=:artistNameInput 
+WHERE artistID= :character_ID_from_the_update_form;
 
-genreID	type	Artist Count	Commission Count
+INSERT INTO ArtistGenres(artistID, genreID )
+VALUES ((SELECT artistID FROM Artists WHERE email=:artistEmailInput), (SELECT genreID FROM Genres WHERE type=:genreTypeInput));
 
+INSERT INTO ArtistMediums(artistID, mediumID )
+VALUES ((SELECT artistID FROM Artists WHERE email=:artistEmailInput), (SELECT mediumID FROM Mediums WHERE type=:mediumTypeInput));
+
+
+-- Edit Customers
+UPDATE Customers SET email = :customerEmailInput, name=:customerNameInput, birthday = :birthdayInput
+WHERE customerID= :character_ID_from_the_update_form;
+
+-- Edit Commissions
+UPDATE Commissions SET requestStatus = :requestStatusInput, dateCompleted = :dateCompletedInput, price=:priceInput
+WHERE commissionID= :character_ID_from_the_update_form;
+
+INSERT INTO ArtistCommissions(artistID, commissionID )
+VALUES ((SELECT artistID FROM Artists WHERE email=:artistEmailInput), :commissionID_from_select);
+
+INSERT INTO CommissionGenres(commissionID, genreID )
+VALUES (:commissionID_from_select, (SELECT genreID FROM Genres WHERE type=:genreTypeInput));
+
+INSERT INTO CommissionMediums(commissionID, mediumID )
+VALUES (:commissionID_from_select, (SELECT mediumID FROM Mediums WHERE type=:mediumTypeInput));
+
+-- Edit Genres
+UPDATE Genres SET type = :genreTypeInput
+WHERE genreID= :character_ID_from_the_update_form;
+
+-- Edit Mediums
+UPDATE Mediums SET type = :mediumTypeInput
+WHERE mediumID= :character_ID_from_the_update_form;
 
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
