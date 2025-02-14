@@ -42,12 +42,31 @@ INSERT INTO ArtistCommissions(artistID,commissionID)
     (SELECT commissionID from Commissions WHERE Commissions.dateRequested=:dateRequestedInput AND customerID=(SELECT customerID from Customers WHERE Customers.name=:customerNameInput));
 
 -- Selections
+-- Artists Page
 SELECT Artists.artistID as "Artist ID",  Artists.email as "Email", Artists.name as "Full Name", Artists.completedCount as "Commissions Completed", Genres.type as "Genres", Mediums.type as "Mediums"
 FROM Artists
 INNER JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID
 INNER JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID
 INNER JOIN Genres ON ArtistGenres.genreID = Genres.genreID
 INNER JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID;
+
+-- Customers Page
+SELECT Customers.customerID as "Customer ID", Customers.email as "Email", Customers.name as "Name", Customers.birthday as "Birthday", Customers.totalOrders as "Total Commissions"
+FROM Customers;
+
+-- Commissions
+SELECT Commissions.commissionID as "Commission ID", Artists.artistID as "Artist ID", Commissions.requestStatus as "Request Status", Genres.type as "Genres", Mediums.type as "Mediums", Commissions.dateRequested as "Date Requested",
+Commissions.dateCompleted as "Date Completed", Commissions.price as "Price", Customers.customerID as "Customer IDs"
+FROM Commissions
+INNER JOIN ArtistCommissions ON Commissions.commissionID = ArtistCommissions.commissionID
+INNER JOIN Artists ON ArtistCommissions.artistID = Artists.artistID
+INNER JOIN CommissionGenres ON Commissions.commissionID = CommissionGenres.commissionID
+INNER JOIN Genres ON CommissionGenres.genreID = Genres.genreID
+INNER JOIN CommissionMediums ON Commissions.commissionID = CommissionMediums.commissionID
+INNER JOIN Mediums ON CommissionMediums.mediumID = Mediums.mediumID
+INNER JOIN Customers ON Commissions.customerID = Customers.customerID;
+
+Commission ID	Artist ID	Request Status	Genres	Mediums	Date Requested	Date Completed	Price	Customer IDs	Edit
 
 
 SET FOREIGN_KEY_CHECKS=1;
