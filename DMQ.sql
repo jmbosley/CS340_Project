@@ -126,5 +126,17 @@ DELETE FROM Genres WHERE Genres.genreID = (SELECT Genres.genreID FROM Genres WHE
 -- Delete from Mediums
 DELETE FROM Mediums WHERE Mediums.mediumID = (SELECT Mediums.mediumID FROM Mediums WHERE Mediums.type=:mediumTypeInput);
 
+-- Delete a Commission (Also deletes from ArtistCommissions, CommissionGenres, CommissionMediums intersection tables)
+DELETE FROM Commissions WHERE Commissions.commissionID = :commissionIDInput;
+
+DELETE FROM CommissionGenres WHERE CommissionGenres.commissionGenreID = 
+(SELECT CommissionGenres.commissionGenreID FROM CommissionGenres WHERE CommissionGenres.commissionID = :commissionIDInput);
+
+DELETE FROM CommissionMediums WHERE CommissionMediums.commissionMediumID = 
+(SELECT CommissionMediums.commissionMediumID FROM CommissionMediums WHERE CommissionMediums.commissionID = :commissionIDInput);
+
+DELETE FROM ArtistCommissions WHERE ArtistCommissions.artistCommissionID = 
+(SELECT ArtistCommissions.artistCommissionID FROM ArtistCommissions WHERE ArtistCommissions.commissionID = :commissionIDInput);
+
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
