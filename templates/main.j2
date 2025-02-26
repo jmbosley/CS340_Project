@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Find an Artist</h1> 
+    </header>
+
+    <nav>
+        <a href="index.html" >Artists</a>
+        <a href="Customers.html" >Customers</a>
+        <a href="Commissions.html" >Commissions</a>
+        <a href="Genres.html" >Genres</a>
+        <a href="Mediums.html" >Mediums</a>
+       <!--<a href="ArtistGenres.html" >ArtistGenres</a>
+        <a href="ArtistMediums.html" >ArtistMediums</a>
+        <a href="ArtistCommissions.html" >ArtistCommissions</a> -->
+        <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+         <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+        
+    </nav>   
+
+    <main>
+        <section>
+            <!-- table -->
+            <h2>Artists</h2>
+            <article id = "artistsTable">
+                <table>
+                    <!-- <caption>Optional Description</caption> -->
+                    <thead>
+                      <tr>
+                        <th>Artist ID</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Commissions Completed</th>
+                        <th>Genres</th>
+                        <th>Mediums</th>
+                        <th>Update</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in tableDisplay %}
+                    <tr>
+                        <td>{{item['artistID']}}</td>
+                        <td>{{item['email']}}</td>
+                        <td>{{item['name']}}</td>
+                        <td>{{item['completedCount']}}</td>
+                        <td>{{item['genres']}}</td>
+                        <td>{{item['mediums']}}</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </table>
+            </article>
+
+         <article id = "artistsForms">
+          <!-- insert -->
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <form>
+                    <legend>Add Artist</legend>
+                    <p>Add a new artist and, optionally, a genre and a medium they associate with.</p>
+                    <label for="email">Artist's Email: </label>
+                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+                    <label for="name">Artist's full name: </label>
+                    <input type="text" id = "name" placeholder="John Doe" required>
+                    <label for="genre">Artist Genre</label>
+                    <select name="genre" id="genre" multiple>
+                      <option value ="Steampunk">Steampunk</option>
+                      <option value ="Cute">Cute</option>
+                      <option value ="Horror">Horror</option>
+                      <option value ="Modern">Modern</option>
+                      <option value ="Impressionism">Impressionism</option>
+                    </select>
+                    <label for="genre">Artist Medium</label>
+                    <select name="medium" id="medium" multiple>
+                      <option value ="OilPaint">Oil Paint</option>
+                      <option value ="Gouache">Gouache</option>
+                      <option value ="Digital">Digital</option>
+                      <option value ="Watercolor">Watercolor</option>
+                      <option value ="Modern">Modern</option>
+                      <option value ="Impressionism">Impressionism</option>
+                    </select>
+                    
+                    <label for="submit"></label>
+                    <input type="submit"/>
+                  </form>
+                </td>
+                <td>
+                  <form>
+                    <legend>Edit Artist</legend>
+                    <p>Edit an existing artist's details or add a medium or genre.</p>
+                    <label for="ArtistID">Artist ID</label>
+                    <select name="ArtistID" id="ArtistID">
+                      <option value="1">1</option>
+                      <option value="1">2</option>
+                      <option value="1">3</option>
+                      <option value="1">4</option>
+                    </select>
+                    <label for="email">Artist's Email: </label>
+                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+                    <label for="name">Artist's full name: </label>
+                    <input type="text" id = "name" placeholder="John Doe" required>
+                    <label for="genre">Artist Genre</label>
+                    <select name="genre" id="genre" multiple>
+                      <option value ="Steampunk">Steampunk</option>
+                      <option value ="Cute">Cute</option>
+                      <option value ="Horror">Horror</option>
+                      <option value ="Modern">Modern</option>
+                      <option value ="Impressionism">Impressionism</option>
+                    </select>
+                    <label for="genre">Artist Medium</label>
+                    <select name="medium" id="medium" multiple>
+                      <option value ="OilPaint">Oil Paint</option>
+                      <option value ="Gouache">Gouache</option>
+                      <option value ="Digital">Digital</option>
+                      <option value ="Watercolor">Watercolor</option>
+                      <option value ="Modern">Modern</option>
+                      <option value ="Impressionism">Impressionism</option>
+                    </select>
+                    
+                    <label for="submit"></label>
+                    <input type="submit"/>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
+</body>
+</html>
