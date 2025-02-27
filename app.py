@@ -6,68 +6,130 @@ import os
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_bosleyj'
-app.config['MYSQL_PASSWORD'] = '5957' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_bosleyj'
+app.config['MYSQL_USER'] = 'cs340_connelan'
+app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_connelan'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
 mysql = MySQL(app)
 
-
 # Routes
 @app.route('/')
 def root():
-    # Grab Artist data so we send it to our template to display
-    query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
-             "FROM Artists "
-             "LEFT JOIN ArtistCommissions ON Artists.artistID = ArtistCommissions.artistID "
-             "LEFT JOIN Commissions ON ArtistCommissions.commissionID = Commissions.commissionID "
-             "LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID "
-             "LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID "
-             "LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID "
-             "LEFT JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID "
-             "GROUP BY artistID;")
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    tableDisplay = cur.fetchall()
+    return redirect("/artists")
+
+@app.route("/artists", methods=["POST", "GET"])
+def artists():
+    if request.method == "GET":
+        # Grab Artist data so we send it to our template to display
+        query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
+                "FROM Artists "
+                "LEFT JOIN ArtistCommissions ON Artists.artistID = ArtistCommissions.artistID "
+                "LEFT JOIN Commissions ON ArtistCommissions.commissionID = Commissions.commissionID "
+                "LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID "
+                "LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID "
+                "LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID "
+                "LEFT JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID "
+                "GROUP BY artistID;")
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        artistTableDisplay = cur.fetchall()
+
+        queryArtistID = ("SELECT Distinct artistID "
+                        "FROM Artists "
+                        "ORDER BY artistID;")
+        cur = mysql.connection.cursor()
+        cur.execute(queryArtistID)
+        artistIDDisplay = cur.fetchall()
     
-    queryGenre = "SELECT Distinct genreID, type AS type FROM Genres;"
-    cur = mysql.connection.cursor()
-    cur.execute(queryGenre)
-    genreDisplay = cur.fetchall()
+        queryGenre = "SELECT Distinct genreID, type AS type FROM Genres;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryGenre)
+        genreDisplay = cur.fetchall()
 
-    return render_template("main.j2", tableDisplay=tableDisplay, genreDisplay=genreDisplay)
+        queryMedium = "SELECT Distinct mediumID, type AS type FROM Mediums;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryMedium)
+        mediumDisplay = cur.fetchall()
 
-@app.route("/artist", methods=["POST", "GET"])
-def artist():
+        return render_template("artists.j2", artistTableDisplay=artistTableDisplay, artistIDDisplay=artistIDDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay)
+        
+
     if request.method == "POST":
-        if request.form.get("Add_Person"):
+        if request.form.get("insertArtist"):
             email = request.form["email"]
             name = request.form["name"]
-            genre = request.form["genre"]
-            medium = request.form["medium"]
-            
+            genre = request.form["genre"] # id
+            medium = request.form["medium"] # id
+
             # Account for null genre AND null medium
             if genre == "" and medium == "":
-                query = ("INSERT INTO Artists (email, name) "
-                         "VALUES (%s, %s);")
+                query = ("INSERT INTO Artists (email, name, completedCount) VALUES (%s, %s, 0);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
             # Account for null genre
             elif genre == "":
-                query = ("INSERT INTO Artists (email, name, medium) "
-                         "VALUES (%s, %s, %s);")
+                query = ("INSERT INTO Artists (email, name, completedCount) "
+                         "VALUES(%s, %s, 0);"
+                         "INSERT INTO ArtistMediums(artistID, mediumID) " # insert into artist we just created
+                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name, email, medium))
+                mysql.connection.commit()
+	                    
             # Account for null Medium
             elif medium == "":
-                query = ("INSERT INTO Artists (email, name, genre) "
-                         "VALUES (%s, %s, %s);")
+                query = ("INSERT INTO Artists (email, name, completedCount) "
+                         "VALUES(%s, %s, 0); "
+                         "INSERT INTO ArtistGenres(artistID, genreID) "
+                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name, email, genre))
+                mysql.connection.commit()
+
             # No Null values
             else:
-                query = ("INSERT INTO Artists (email, name, genre, medium) "
-                         "VALUES (%s, %s, %s, %s);")
-            cur = mysql.connection.cursor()
-            cur.execute(query, (email, name, genre, medium))
-            mysql.connection.commit()
-            return redirect("/")
+                query = ("INSERT INTO Artists (email, name, completedCount) "
+                         "VALUES(%s, %s, 0); "
+                         "INSERT INTO ArtistMediums(artistID, mediumID) "
+                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s); "
+                         "INSERT INTO ArtistGenres(artistID, genreID) "
+                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name, email, medium, email, name))
+                mysql.connection.commit()
+
+        
+            return redirect("/artists")
+    
+# route for delete functionality, deleting a person from Artists,
+# we want to pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/deleteArtist/<int:artistID>")
+def deleteArtist(artistID):
+    # mySQL query to delete the person with our passed id
+    query = "DELETE FROM Artists WHERE artistID = '%s';"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (artistID,))
+    mysql.connection.commit()
+
+    return redirect("/artists")
+
+# route for edit functionality, updating the attributes of a person in bsg_people
+# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/editArtist/<int:artistID>", methods=["POST", "GET"])
+def editArtist(artistID):
+    if request.method == "GET":
+        query = "SELECT * FROM Artists WHERE id = %s" % (artistID)
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        editArtistData = cur.fetchall()
+
+        # render edit_people page passing our query data and homeworld data to the edit_people template (might beed to make another file?)
+        return render_template("artists.j2", editArtistData=editArtistData) # reload page will filled data?
+
 
 
 
@@ -78,4 +140,7 @@ def artist():
 if __name__ == "__main__":
 
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=59575, debug=True)
+    app.run(port=59576, debug=True)
+
+    # 59575 
+    # gunicorn -b 0.0.0.0:59576 -D app:app

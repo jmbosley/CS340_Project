@@ -14,11 +14,11 @@
     </header>
 
     <nav>
-        <a href="index.html" >Artists</a>
-        <a href="Customers.html" >Customers</a>
-        <a href="Commissions.html" >Commissions</a>
-        <a href="Genres.html" >Genres</a>
-        <a href="Mediums.html" >Mediums</a>
+        <a href="artists" >Artists</a>
+        <a href="customers" >Customers</a>
+        <a href="commissions" >Commissions</a>
+        <a href="genres" >Genres</a>
+        <a href="mediums" >Mediums</a>
        <!--<a href="ArtistGenres.html" >ArtistGenres</a>
         <a href="ArtistMediums.html" >ArtistMediums</a>
         <a href="ArtistCommissions.html" >ArtistCommissions</a> -->
@@ -43,10 +43,12 @@
                         <th>Genres</th>
                         <th>Mediums</th>
                         <th>Update</th>
+                        <th>Delete</th>
                       </tr>
                     </thead>
                     <tbody>
-                    {% for item in tableDisplay %}
+
+                    {% for item in artistTableDisplay %}
                     <tr>
                         <td>{{item['artistID']}}</td>
                         <td>{{item['email']}}</td>
@@ -54,11 +56,22 @@
                         <td>{{item['completedCount']}}</td>
                         <td>{{item['genre']}}</td>
                         <td>{{item['medium']}}</td>
+                        
                         <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        <a href="editArtist/{{item.artistID}}" class="btn btn-default">
+                        <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </a>
                         </td>
+
+                        <td class="delete">
+                        <a href="deleteArtist/{{item.artistID}}" class="btn btn-default">
+                        <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </a>
+                        </td>
+                        						    
                     </tr>
                     {% endfor %}
+
                   </table>
             </article>
 
@@ -68,75 +81,76 @@
             <tbody>
               <tr>
                 <td>
-                  <form>
+
+                  <form id="addArtist" action="/artists" method="post">
                     <legend>Add Artist</legend>
                     <p>Add a new artist and, optionally, a genre and a medium they associate with.</p>
+
+                    <fieldset>
+
                     <label for="email">Artist's Email: </label>
-                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+                    <input type="email" id ="email" name="email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+
                     <label for="name">Artist's full name: </label>
-                    <input type="text" id = "name" placeholder="John Doe" required>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
 
                     <label for="genre">Artist Genre</label>
                     <select name="genre" id="genre" multiple>
-                    {% for item in tableDisplay %}
-                    <option value ={{item['type']}}>{{item['type']}}</option>
-                    {% endfor %}
-                      <option value ="Cute">Cute</option>
-                      <option value ="Horror">Horror</option>
-                      <option value ="Modern">Modern</option>
-                      <option value ="Impressionism">Impressionism</option>
+                      {% for genre in genreDisplay %}
+                      <option value ={{genre['genreID']}}>{{genre['type']}}</option>
+                      {% endfor %}
                     </select>
 
-                    <label for="genre">Artist Medium</label>
+                    <label for="medium">Artist Medium</label>
                     <select name="medium" id="medium" multiple>
-                      <option value ="OilPaint">Oil Paint</option>
-                      <option value ="Gouache">Gouache</option>
-                      <option value ="Digital">Digital</option>
-                      <option value ="Watercolor">Watercolor</option>
-                      <option value ="Modern">Modern</option>
-                      <option value ="Impressionism">Impressionism</option>
+                      {% for medium in mediumDisplay %}
+                      <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
+                      {% endfor %}
                     </select>
-                    
-                    <label for="submit"></label>
-                    <input type="submit"/>
+                    </fieldset>
+
+                    <input type="submit" value="Add Artist" name="insertArtist" class="btn btn-primary">
+
                   </form>
                 </td>
                 <td>
-                  <form>
+
+
+                  <form id="editArtist" action="/editArtist/" method="post">
                     <legend>Edit Artist</legend>
                     <p>Edit an existing artist's details or add a medium or genre.</p>
-                    <label for="ArtistID">Artist ID</label>
-                    <select name="ArtistID" id="ArtistID">
-                      <option value="1">1</option>
-                      <option value="1">2</option>
-                      <option value="1">3</option>
-                      <option value="1">4</option>
+
+                    <label for="artistID">Artist ID</label>
+                    <select name="artistID" id="artistID" required>
+                      {% for artist in artistIDDisplay %}
+                      <option value ={{artist['artistID']}}>{{artist['artistID']}}</option>
+                      {% endfor %}
                     </select>
+
                     <label for="email">Artist's Email: </label>
                     <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
                     <label for="name">Artist's full name: </label>
                     <input type="text" id = "name" placeholder="John Doe" required>
+
                     <label for="genre">Artist Genre</label>
                     <select name="genre" id="genre" multiple>
-                      <option value ="Steampunk">Steampunk</option>
-                      <option value ="Cute">Cute</option>
-                      <option value ="Horror">Horror</option>
-                      <option value ="Modern">Modern</option>
-                      <option value ="Impressionism">Impressionism</option>
+                      {% for genre in genreDisplay %}
+                      <option value ={{genre['genreID']}}>{{genre['type']}}</option>
+                      {% endfor %}
                     </select>
-                    <label for="genre">Artist Medium</label>
+
+                    <label for="medium">Artist Medium</label>
                     <select name="medium" id="medium" multiple>
-                      <option value ="OilPaint">Oil Paint</option>
-                      <option value ="Gouache">Gouache</option>
-                      <option value ="Digital">Digital</option>
-                      <option value ="Watercolor">Watercolor</option>
-                      <option value ="Modern">Modern</option>
-                      <option value ="Impressionism">Impressionism</option>
+                      {% for medium in mediumDisplay %}
+                      <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
+                      {% endfor %}
                     </select>
                     
+
                     <label for="submit"></label>
                     <input type="submit"/>
                   </form>
+
                 </td>
               </tr>
             </tbody>
