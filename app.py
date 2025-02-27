@@ -19,9 +19,10 @@ mysql = MySQL(app)
 @app.route('/')
 def root():
     # Grab Artist data so we send it to our template to display
-    query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT ArtistCommissions.commissionID) AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
+    query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
              "FROM Artists "
              "LEFT JOIN ArtistCommissions ON Artists.artistID = ArtistCommissions.artistID "
+             "LEFT JOIN Commissions ON ArtistCommissions.commissionID = Commissions.commissionID "
              "LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID "
              "LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID "
              "LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID "
