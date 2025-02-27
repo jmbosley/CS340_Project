@@ -81,7 +81,6 @@
             <tbody>
               <tr>
                 <td>
-
                   <form id="addArtist" action="/artists" method="post">
                     <legend>Add Artist</legend>
                     <p>Add a new artist and, optionally, a genre and a medium they associate with.</p>
@@ -95,14 +94,16 @@
                     <input type="text" id="name" name="name" placeholder="John Doe" required>
 
                     <label for="genre">Artist Genre</label>
-                    <select name="genre" id="genre" multiple>
+                    <select name="genre" id="genre">
+                      <option value="0" selected="selected">None</option>
                       {% for genre in genreDisplay %}
                       <option value ={{genre['genreID']}}>{{genre['type']}}</option>
                       {% endfor %}
                     </select>
 
                     <label for="medium">Artist Medium</label>
-                    <select name="medium" id="medium" multiple>
+                    <select name="medium" id="medium">
+                      <option value="0" selected="selected">None</option>
                       {% for medium in mediumDisplay %}
                       <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
                       {% endfor %}
@@ -110,6 +111,7 @@
                     </fieldset>
 
                     <input type="submit" value="Add Artist" name="insertArtist" class="btn btn-primary">
+                    
 
                   </form>
                 </td>

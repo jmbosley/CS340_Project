@@ -21,6 +21,64 @@ def root():
 
 @app.route("/artists", methods=["POST", "GET"])
 def artists():
+    
+    if request.method == "POST":
+        if request.form.get("insertArtist"):
+            email = request.form["email"]
+            name = request.form["name"]
+            genre = request.form["genre"] # id
+            medium = request.form["medium"] # id
+
+            # Account for null genre AND null medium
+            if genre == "0" and medium == "0":
+                query = ("INSERT INTO Artists (email, name, completedCount) VALUES (%s, %s, 10);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
+            # Account for null genre
+            elif genre == "0":
+                query = ("INSERT INTO Artists (email, name, completedCount) VALUES(%s, %s, 0);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
+                query2 = ("INSERT INTO ArtistMediums(artistID, mediumID) VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query2, (email, medium))
+                mysql.connection.commit()
+	                    
+            # Account for null Medium
+            elif medium == "0":
+                query = ("INSERT INTO Artists (email, name, completedCount) VALUES(%s, %s, 0); ")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
+                query2 = ("INSERT INTO ArtistGenres(artistID, genreID) VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query2, (email, genre))
+                mysql.connection.commit()
+
+            # No Null values
+            else:
+                query = ("INSERT INTO Artists (email, name, completedCount) VALUES(%s, %s, 0); ")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
+                query2 = ("INSERT INTO ArtistMediums(artistID, mediumID) VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query2, (email, medium))
+                mysql.connection.commit()
+
+                query3 = ("INSERT INTO ArtistGenres(artistID, genreID) VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query3, (email, genre))
+                mysql.connection.commit()
+        
+            return redirect("/artists")
+
     if request.method == "GET":
         # Grab Artist data so we send it to our template to display
         query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
@@ -54,56 +112,6 @@ def artists():
         mediumDisplay = cur.fetchall()
 
         return render_template("artists.j2", artistTableDisplay=artistTableDisplay, artistIDDisplay=artistIDDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay)
-        
-
-    if request.method == "POST":
-        if request.form.get("insertArtist"):
-            email = request.form["email"]
-            name = request.form["name"]
-            genre = request.form["genre"] # id
-            medium = request.form["medium"] # id
-
-            # Account for null genre AND null medium
-            if genre == "" and medium == "":
-                query = ("INSERT INTO Artists (email, name, completedCount) VALUES (%s, %s, 0);")
-                cur = mysql.connection.cursor()
-                cur.execute(query, (email, name))
-                mysql.connection.commit()
-
-            # Account for null genre
-            elif genre == "":
-                query = ("INSERT INTO Artists (email, name, completedCount) "
-                         "VALUES(%s, %s, 0);"
-                         "INSERT INTO ArtistMediums(artistID, mediumID) " # insert into artist we just created
-                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
-                cur = mysql.connection.cursor()
-                cur.execute(query, (email, name, email, medium))
-                mysql.connection.commit()
-	                    
-            # Account for null Medium
-            elif medium == "":
-                query = ("INSERT INTO Artists (email, name, completedCount) "
-                         "VALUES(%s, %s, 0); "
-                         "INSERT INTO ArtistGenres(artistID, genreID) "
-                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
-                cur = mysql.connection.cursor()
-                cur.execute(query, (email, name, email, genre))
-                mysql.connection.commit()
-
-            # No Null values
-            else:
-                query = ("INSERT INTO Artists (email, name, completedCount) "
-                         "VALUES(%s, %s, 0); "
-                         "INSERT INTO ArtistMediums(artistID, mediumID) "
-                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s); "
-                         "INSERT INTO ArtistGenres(artistID, genreID) "
-                         "VALUES((SELECT artistID from Artists WHERE Artists.email= %s), %s);")
-                cur = mysql.connection.cursor()
-                cur.execute(query, (email, name, email, medium, email, name))
-                mysql.connection.commit()
-
-        
-            return redirect("/artists")
     
 # route for delete functionality, deleting a person from Artists,
 # we want to pass the 'id' value of that person on button click (see HTML) via the route
