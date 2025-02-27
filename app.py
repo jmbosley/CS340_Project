@@ -22,6 +22,7 @@ def root():
 @app.route("/artists", methods=["POST", "GET"])
 def artists():
     
+    # edit
     if request.method == "POST":
         if request.form.get("insertArtist"):
             email = request.form["email"]
@@ -79,6 +80,7 @@ def artists():
         
             return redirect("/artists")
 
+    # load table/dropdowns
     if request.method == "GET":
         # Grab Artist data so we send it to our template to display
         query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
@@ -113,11 +115,9 @@ def artists():
 
         return render_template("artists.j2", artistTableDisplay=artistTableDisplay, artistIDDisplay=artistIDDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay)
     
-# route for delete functionality, deleting a person from Artists,
-# we want to pass the 'id' value of that person on button click (see HTML) via the route
+# delete
 @app.route("/deleteArtist/<int:artistID>")
 def deleteArtist(artistID):
-    # mySQL query to delete the person with our passed id
     query = "DELETE FROM Artists WHERE artistID = '%s';"
     cur = mysql.connection.cursor()
     cur.execute(query, (artistID,))

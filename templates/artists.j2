@@ -85,7 +85,7 @@
                     <legend>Add Artist</legend>
                     <p>Add a new artist and, optionally, a genre and a medium they associate with.</p>
 
-                    <fieldset>
+                    
 
                     <label for="email">Artist's Email: </label>
                     <input type="email" id ="email" name="email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
@@ -108,9 +108,9 @@
                       <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
                       {% endfor %}
                     </select>
-                    </fieldset>
+                    
 
-                    <input type="submit" value="Add Artist" name="insertArtist" class="btn btn-primary">
+                    <input type="submit" value="Add Artist" name="insertArtist">
                     
 
                   </form>
