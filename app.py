@@ -24,7 +24,7 @@ def artists():
     
     # edit
     if request.method == "POST":
-        if request.form.get("insertArtist"):
+        if request.form.get("insertArtist"): # submit button pressed
             email = request.form["email"]
             name = request.form["name"]
             genre = request.form["genre"] # id
