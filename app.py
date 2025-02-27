@@ -31,7 +31,45 @@ def root():
     cur = mysql.connection.cursor()
     cur.execute(query)
     tableDisplay = cur.fetchall()
-    return render_template("main.j2", tableDisplay=tableDisplay)
+    
+    queryGenre = "SELECT Distinct genreID, type AS type FROM Genres;"
+    cur = mysql.connection.cursor()
+    cur.execute(queryGenre)
+    genreDisplay = cur.fetchall()
+
+    return render_template("main.j2", tableDisplay=tableDisplay, genreDisplay=genreDisplay)
+
+@app.route("/artist", methods=["POST", "GET"])
+def artist():
+    if request.method == "POST":
+        if request.form.get("Add_Person"):
+            email = request.form["email"]
+            name = request.form["name"]
+            genre = request.form["genre"]
+            medium = request.form["medium"]
+            
+            # Account for null genre AND null medium
+            if genre == "" and medium == "":
+                query = ("INSERT INTO Artists (email, name) "
+                         "VALUES (%s, %s);")
+            # Account for null genre
+            elif genre == "":
+                query = ("INSERT INTO Artists (email, name, medium) "
+                         "VALUES (%s, %s, %s);")
+            # Account for null Medium
+            elif medium == "":
+                query = ("INSERT INTO Artists (email, name, genre) "
+                         "VALUES (%s, %s, %s);")
+            # No Null values
+            else:
+                query = ("INSERT INTO Artists (email, name, genre, medium) "
+                         "VALUES (%s, %s, %s, %s);")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (email, name, genre, medium))
+            mysql.connection.commit()
+            return redirect("/")
+
+
 
 
     
