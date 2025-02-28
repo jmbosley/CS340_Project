@@ -48,7 +48,7 @@
                 <label for="medium">Artist Medium</label>
                 <select name="medium" id="medium" multiple>
                     {% for medium in mediumDisplay %}
-                    <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
+                    <option value ={{medium['mediumID']}} {% if medium in currMediumList %}Selected{% endif %} >{{medium['type']}}</option>
                     {% endfor %}
                 </select>
                 <label for="submit"></label>

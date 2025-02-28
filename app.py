@@ -160,10 +160,18 @@ def editArtist(artistID):
         cur = mysql.connection.cursor()
         cur.execute(querycurrGenre, (artistID,))
         currGenreList = cur.fetchall()
+
+        querycurrMedium = ("SELECT ArtistMediums.mediumID AS mediumID, type AS type FROM ArtistMediums " 
+                        "LEFT JOIN Artists ON Artists.artistID = ArtistMediums.artistID "
+                        "LEFT JOIN Mediums ON Mediums.mediumID = ArtistMediums.mediumID "
+                        "WHERE Artists.artistID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrMedium, (artistID,))
+        currMediumList = cur.fetchall()
  
       
 
-        return render_template("editArtist.j2", editArtistData=editArtistData, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, currGenreList=currGenreList)
+        return render_template("editArtist.j2", editArtistData=editArtistData, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, currGenreList=currGenreList, currMediumList=currMediumList)
 
     if request.method == "POST":
        if request.form.get("editArtist"): # submit button pressed
