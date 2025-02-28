@@ -1,6 +1,68 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
 <body>
-<p> you've loaded the editArtist page </p>
+
+    <header>
+        <h1>Edit Artist</h1> 
+    </header>
+
+    <main>
+        <section>
+            <!-- table -->
+                <form id="editArtist" action="/editArtist/" method="post">
+                <legend>Edit Artist</legend>
+                <p>Edit an existing artist's details or add a medium or genre.</p>
+
+
+                    
+                <label for="artistID">Artist ID</label>
+                <select name="artistID" id="artistID" required>
+                    {% for artist in editArtistData %}
+                    <option value ={{artist['artistID']}}>{{artist['artistID']}}</option>
+                    {% endfor %}
+                </select>
+
+                {% for artist in editArtistData %}
+                <label for="email">Artist's Email: </label>
+                <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"value={{artist['email']}} required>
+                
+                <label for="name">Artist's full name: </label>
+                
+                <input type="text" id = "name" value={{artist['name']}} required>
+                {% endfor %}
+
+
+                <label for="genre">Artist Genre</label>
+                <select name="genre" id="genre" multiple>
+                    {% for genre in genreDisplay %}
+                    <option value ={{genre['genreID']}}>{{genre['type']}}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="medium">Artist Medium</label>
+                <select name="medium" id="medium" multiple>
+                    {% for medium in mediumDisplay %}
+                    <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
+                    {% endfor %}
+                </select>
+                <label for="submit"></label>
+                <input type="submit"/>
+                </form>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
 </body>
 </html>

@@ -94,7 +94,7 @@
                     <input type="text" id="name" name="name" placeholder="John Doe" required>
 
                     <label for="genre">Artist Genre</label>
-                    <select name="genre" id="genre">
+                    <select name="genre" id="genre" multiple>
                       <option value="0" selected="selected">None</option>
                       {% for genre in genreDisplay %}
                       <option value ={{genre['genreID']}}>{{genre['type']}}</option>
@@ -102,7 +102,7 @@
                     </select>
 
                     <label for="medium">Artist Medium</label>
-                    <select name="medium" id="medium">
+                    <select name="medium" id="medium" multi>
                       <option value="0" selected="selected">None</option>
                       {% for medium in mediumDisplay %}
                       <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
@@ -114,45 +114,6 @@
                     
 
                   </form>
-                </td>
-                <td>
-
-
-                  <form id="editArtist" action="/editArtist/" method="post">
-                    <legend>Edit Artist</legend>
-                    <p>Edit an existing artist's details or add a medium or genre.</p>
-
-                    <label for="artistID">Artist ID</label>
-                    <select name="artistID" id="artistID" required>
-                      {% for artist in artistIDDisplay %}
-                      <option value ={{artist['artistID']}}>{{artist['artistID']}}</option>
-                      {% endfor %}
-                    </select>
-
-                    <label for="email">Artist's Email: </label>
-                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
-                    <label for="name">Artist's full name: </label>
-                    <input type="text" id = "name" placeholder="John Doe" required>
-
-                    <label for="genre">Artist Genre</label>
-                    <select name="genre" id="genre" multiple>
-                      {% for genre in genreDisplay %}
-                      <option value ={{genre['genreID']}}>{{genre['type']}}</option>
-                      {% endfor %}
-                    </select>
-
-                    <label for="medium">Artist Medium</label>
-                    <select name="medium" id="medium" multiple>
-                      {% for medium in mediumDisplay %}
-                      <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
-                      {% endfor %}
-                    </select>
-                    
-
-                    <label for="submit"></label>
-                    <input type="submit"/>
-                  </form>
-
                 </td>
               </tr>
             </tbody>
