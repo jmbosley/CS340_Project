@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Find an Artist</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Find an Artist</h1> 
+    </header>
+
+    <nav>
+      <a href="artists" >Artists</a>
+      <a href="customers" >Customers</a>
+      <a href="commissions" >Commissions</a>
+      <a href="genres" >Genres</a>
+      <a href="mediums" >Mediums</a>
+     <!--<a href="ArtistGenres.html" >ArtistGenres</a>
+      <a href="ArtistMediums.html" >ArtistMediums</a>
+      <a href="ArtistCommissions.html" >ArtistCommissions</a> -->
+      <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+       <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+    </nav>   
+
+    <main>
+        <section>
+            <!-- table -->
+            <h2>Genres</h2>
+            <article id = "genresTable">
+                <table>
+                    <thead>
+                      <tr>
+                        <th>genreID</th>
+                        <th>type</th>
+                        <th>Artist Count</th>
+                        <th>Commission Count</th>
+                        <th>Update</th>
+                        <th>Delete</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>Steampunk</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                        <td class="delete">
+                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </td>
+
+
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>Cute</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                        <td class="delete">
+                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </td>
+                        
+
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>Horror</td>
+                        <td>2</td>
+                        <td>2</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                        <td class="delete">
+                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </td>
+
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td>Modern</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                        <td class="delete">
+                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </td>
+
+                      </tr>
+                      <tr>
+                        <td>5</td>
+                        <td>Impressionism</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+                        <td class="delete">
+                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+            </article>
+
+         <article id = "genreForms">
+          <!-- insert -->
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <form>
+                    <legend>Add Genre</legend>
+                    <p>Specify the name of the genre.</p>
+                    <label for="type">Genre type: </label>
+                    <input type="text" id = "type" placeholder="Steampunk" required>
+                    <input type="submit"/>
+                  </form>
+                </td>
+                <td>
+                  <form>
+                    <legend>Edit Genre</legend>
+                    <p>Change the name of the genre.</p>
+                    <label for="type">Genre type: </label>
+                    <input type="text" id = "type" placeholder="Steampunk" required>
+                    <input type="submit"/>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+         </article>
+        </section>
+    </main>
+</body>
+</html>

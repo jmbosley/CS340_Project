@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Find an Artist</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Find an Artist</h1> 
+    </header>
+
+    <nav>
+      <a href="artists" >Artists</a>
+      <a href="customers" >Customers</a>
+      <a href="commissions" >Commissions</a>
+      <a href="genres" >Genres</a>
+      <a href="mediums" >Mediums</a>
+     <!--<a href="ArtistGenres.html" >ArtistGenres</a>
+      <a href="ArtistMediums.html" >ArtistMediums</a>
+      <a href="ArtistCommissions.html" >ArtistCommissions</a> -->
+      <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+       <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
+    </nav>   
+
+    <main>
+        <section>
+            <!-- table -->
+            <h2>Customers</h2>
+            <article id = "customersTable">
+                <table>
+                    <!-- <caption>Optional Description</caption> -->
+                    <thead>
+                      <tr>
+                        <th>Customer ID</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Birthday</th>
+                        <th>Total Commissions</th>
+                        <th>Update</th>
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td>JoeShmow@yahoo.com</td>
+                        <td>Joe Shmow</td>
+                        <td>1965-04-16</td>
+                        <td>1</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td>wWilson@hotmail.com</td>
+                        <td>Wade Wilson</td>
+                        <td>NULL</td>
+                        <td>1</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td>bobTheArtLover@gmail.com</td>
+                        <td>Bob Rodriguez</td>
+                        <td>1957-02-05</td>
+                        <td>2</td>
+                        <td class="edit">
+                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </td>
+
+                      </tr>
+                    </tbody>
+                  </table>
+            </article>
+
+         <article id = "customerForms">
+          <!-- insert -->
+          <table>
+            <tbody>
+              <tr>
+                <td>
+                  <form>
+                    <legend>Add Customer</legend>
+                    <p>Create a new customer with an email, full name, and, optionally, birthday.</p>
+                    <label for="email">Customer's Email: </label>
+                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+        
+                    <label for="name">Customer's full name: </label>
+                    <input type="text" id = "name" placeholder="John Doe" required>
+        
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" name="birthday">
+        
+                    
+                    <input type="submit"/>
+                  </form>
+                </td>
+                <td>
+                  <form>
+                    <legend>Edit Customer</legend>
+                    <p>Change the details of a customer.</p>
+                    <label for="email">Customer's Email: </label>
+                    <input type="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"placeholder="email@domain.com" required>
+        
+                    <label for="name">Customer's full name: </label>
+                    <input type="text" id = "name" placeholder="John Doe" required>
+        
+                    <label for="birthday">Birthday:</label>
+                    <input type="date" id="birthday" name="birthday">
+        
+                   
+                    <input type="submit"/>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+         </article>
+        </section>
+    </main>
+</body>
+</html>

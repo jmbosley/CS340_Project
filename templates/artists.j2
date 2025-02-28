@@ -102,7 +102,7 @@
                     </select>
 
                     <label for="medium">Artist Medium</label>
-                    <select name="medium" id="medium" multi>
+                    <select name="medium" id="medium" multiple>
                       <option value="0" selected="selected">None</option>
                       {% for medium in mediumDisplay %}
                       <option value ={{medium['mediumID']}}>{{medium['type']}}</option>

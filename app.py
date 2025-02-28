@@ -19,6 +19,24 @@ mysql = MySQL(app)
 def root():
     return redirect("/artists")
 
+@app.route('/commissions')
+def commissions():
+    return render_template("commissions.j2")
+
+@app.route('/customers')
+def customers():
+    return render_template("customers.j2")
+
+@app.route('/genres')
+def genress():
+    return render_template("genres.j2")
+
+@app.route('/mediums')
+def mediums():
+    return render_template("mediums.j2")
+
+
+
 @app.route("/artists", methods=["POST", "GET"])
 def artists():
     
