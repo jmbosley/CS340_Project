@@ -6,9 +6,9 @@ import os
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_bosleyj'
-app.config['MYSQL_PASSWORD'] = '5957' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_bosleyj'
+app.config['MYSQL_USER'] = 'cs340_connelan'
+app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_connelan'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
@@ -164,29 +164,77 @@ def editArtist(artistID):
             genre = request.form.getlist("genre") # id
             medium = request.form.getlist("medium") # id
             
-            # get current data
-            query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
-                "FROM Artists "
-                "LEFT JOIN ArtistCommissions ON Artists.artistID = ArtistCommissions.artistID "
-                "LEFT JOIN Commissions ON ArtistCommissions.commissionID = Commissions.commissionID "
-                "LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID "
-                "LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID "
-                "LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID "
-                "LEFT JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID "
-                "GROUP BY artistID;")
-            cur = mysql.connection.cursor()
-            cur.execute(query)
-            artistTableDisplay = cur.fetchall()
+            #get current data
+            #query = ("SELECT Artists.artistID AS artistID, Artists.email AS email, Artists.name AS name, COUNT(DISTINCT Commissions.commissionID, Commissions.requestStatus = 'Request Complete') AS completedCount, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium "
+            #    "FROM Artists "
+            #    "LEFT JOIN ArtistCommissions ON Artists.artistID = ArtistCommissions.artistID "
+            #    "LEFT JOIN Commissions ON ArtistCommissions.commissionID = Commissions.commissionID "
+            #    "LEFT JOIN ArtistGenres ON Artists.artistID = ArtistGenres.artistID "
+            #    "LEFT JOIN ArtistMediums ON Artists.artistID = ArtistMediums.artistID "
+            #    "LEFT JOIN Genres ON ArtistGenres.genreID = Genres.genreID "
+            #    "LEFT JOIN Mediums ON ArtistMediums.mediumID = Mediums.mediumID "
+            #    "GROUP BY artistID;")
+            #cur = mysql.connection.cursor()
+            #cur.execute(query)
+            #artistTableDisplay = cur.fetchall()
 
-            # Update email only
-            if 
-                query = ("INSERT INTO Artists (email, name, completedCount) VALUES (%s, %s, 0);")
-                cur = mysql.connection.cursor()
-                cur.execute(query, (email, name))
-                mysql.connection.commit()
-                            
+            # Update email, name only
+            query = ("UPDATE Artists SET email = %s, name = %s WHERE artistID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (email, name, artistID))
+            mysql.connection.commit()
+
+            # ArtistGenres
+            genreQuery = ("SELECT ArtistGenres.genreID FROM ArtistGenres " 
+                        "LEFT JOIN Artists ON Artists.artistID = ArtistGenres.artistID "
+                        "WHERE Artists.artistID = %s;")
+            cur.execute(genreQuery, (artistID,))
+            currGenreList = cur.fetchall()
+
+            # delete genres
+            #for currGenreID in currGenreList:
+            #    if currGenreID not in genre:
+            #        query = "DELETE FROM ArtistGenres WHERE artistID = %s AND genreID = %s;"
+            #        cur = mysql.connection.cursor()
+            #        cur.execute(query, (artistID, currGenreID,))
+            #        mysql.connection.commit()
+
+            #cur.execute(genreQuery, (artistID,))
+            #currGenreList = cur.fetchall()
+
+            query = ("DELETE FROM ArtistGenres WHERE artistID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (artistID,))
+            mysql.connection.commit()
+
+            # add genres
+            for currGenreID in genre:
+                if currGenreID not in currGenreList:
+                    query = ("INSERT INTO ArtistGenres (artistID, genreID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (artistID, currGenreID))
+                    mysql.connection.commit()
             
-        
+            # ArtistMediums
+            genreQuery = ("SELECT ArtistMediums.mediumID FROM ArtistMediums " 
+                        "LEFT JOIN Artists ON Artists.artistID = ArtistMediums.artistID "
+                        "WHERE Artists.artistID = %s;")
+            cur.execute(genreQuery, (artistID,))
+            currMediumList = cur.fetchall()
+
+            query = ("DELETE FROM ArtistMediums WHERE artistID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (artistID,))
+            mysql.connection.commit()
+
+            # add genres
+            for currMediumID in medium:
+                if currMediumID not in currMediumList:
+                    query = ("INSERT INTO ArtistMediums (artistID, mediumID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (artistID, currMediumID))
+                    mysql.connection.commit()
+                            
             return redirect("/artists")
 
 
@@ -199,7 +247,7 @@ def editArtist(artistID):
 if __name__ == "__main__":
 
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=59575, debug=True)
+    app.run(port=59576, debug=True)
 
     # 59575 
     # gunicorn -b 0.0.0.0:59576 -D app:app
