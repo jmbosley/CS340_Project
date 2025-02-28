@@ -39,10 +39,10 @@
                 {% endfor %}
 
 
-                <label for="genre">Artist Genre</label>
+               <label for="genre">Artist Genre</label>
                 <select name="genre" id="genre" multiple>
                     {% for genre in genreDisplay %}
-                    <option value ={{genre['genreID']}}>{{genre['type']}}</option>
+                    <option value ={{genre['genreID']}} {% if genre in currGenreList %}Selected{% endif %} >{{genre['type']}}</option>
                     {% endfor %}
                 </select>
 
