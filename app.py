@@ -118,7 +118,7 @@ def artists():
 # delete
 @app.route("/deleteArtist/<int:artistID>")
 def deleteArtist(artistID):
-    query = "DELETE FROM Artists WHERE artistID = '%s';"
+    query = "DELETE FROM Artists WHERE artistID = %s;"
     cur = mysql.connection.cursor()
     cur.execute(query, (artistID,))
     mysql.connection.commit()
@@ -130,13 +130,13 @@ def deleteArtist(artistID):
 @app.route("/editArtist/<int:artistID>", methods=["POST", "GET"])
 def editArtist(artistID):
     if request.method == "GET":
-        query = "SELECT * FROM Artists WHERE id = %s" % (artistID)
+        query = "SELECT * FROM Artists WHERE artistID = %s;"
         cur = mysql.connection.cursor()
-        cur.execute(query)
+        cur.execute(query, (artistID,)) #it doesn't work without the comma
         editArtistData = cur.fetchall()
 
         # render edit_people page passing our query data and homeworld data to the edit_people template (might beed to make another file?)
-        return render_template("artists.j2", editArtistData=editArtistData) # reload page will filled data?
+        return render_template("editArtist.j2", editArtistData=editArtistData)
 
 
 
