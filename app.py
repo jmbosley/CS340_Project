@@ -6,9 +6,9 @@ import os
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_bosleyj'
-app.config['MYSQL_PASSWORD'] = '5957' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_bosleyj'
+app.config['MYSQL_USER'] = 'cs340_connelan'
+app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_connelan'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
@@ -216,16 +216,34 @@ def editArtist(artistID):
             cur = mysql.connection.cursor()
             cur.execute(query, (artistID,))
             mysql.connection.commit()
-            
+
             # add genres
-            for genreID in genre:
-                if genreID not in currGenreList:
+            for currGenreID in genre:
+                if currGenreID not in currGenreList:
                     query = ("INSERT INTO ArtistGenres (artistID, genreID) VALUES(%s, %s); ")
                     cur = mysql.connection.cursor()
-                    cur.execute(query, (artistID, genreID))
+                    cur.execute(query, (artistID, currGenreID))
                     mysql.connection.commit()
             
-            
+            # ArtistMediums
+            genreQuery = ("SELECT ArtistMediums.mediumID FROM ArtistMediums " 
+                        "LEFT JOIN Artists ON Artists.artistID = ArtistMediums.artistID "
+                        "WHERE Artists.artistID = %s;")
+            cur.execute(genreQuery, (artistID,))
+            currMediumList = cur.fetchall()
+
+            query = ("DELETE FROM ArtistMediums WHERE artistID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (artistID,))
+            mysql.connection.commit()
+
+            # add mediums
+            for currMediumID in medium:
+                if currMediumID not in currMediumList:
+                    query = ("INSERT INTO ArtistMediums (artistID, mediumID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (artistID, currMediumID))
+                    mysql.connection.commit()
             
             return redirect("/artists")
        
@@ -241,7 +259,7 @@ def editArtist(artistID):
 if __name__ == "__main__":
 
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=59575, debug=True)
+    app.run(port=59576, debug=True)
 
     # 59575 
     # gunicorn -b 0.0.0.0:59576 -D app:app
