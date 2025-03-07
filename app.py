@@ -6,9 +6,9 @@ import os
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_connelan'
-app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_connelan'
+app.config['MYSQL_USER'] = 'cs340_bosleyj'
+app.config['MYSQL_PASSWORD'] = '5957' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_bosleyj'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
@@ -19,22 +19,251 @@ mysql = MySQL(app)
 def root():
     return redirect("/artists")
 
-@app.route('/commissions')
-def commissions():
-    return render_template("commissions.j2")
 
-@app.route('/customers')
+
+@app.route("/commissions", methods=["POST", "GET"])
+def commissions():
+    if request.method == "POST":
+        if request.form.get("insertCommission"): # submit button pressed
+            customer = request.form["customer"]
+            dateRequested = request.form["dateRequested"]
+            price = request.form["price"]
+
+            genre = request.form.getlist("genre") # id
+            medium = request.form.getlist("medium") # id
+            artist = request.form.getlist("artists") # id
+
+            # Add in required values
+            query = ("INSERT INTO Commissions (requestStatus, dateRequested, price, customerID) VALUES(1, %s, %s, %s);")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (dateRequested, price, customer))
+            mysql.connection.commit()
+
+            # Add Artist
+            query2 = ("INSERT INTO ArtistCommissions(artistID, commissionID) VALUES(%s, (SELECT commissionID from Commissions WHERE Commissions.dateRequested=%s AND customerID=%s));")       
+            cur = mysql.connection.cursor()
+            for artisttype in artist:
+                cur.execute(query2, (artisttype, dateRequested, customer))
+                mysql.connection.commit()
+
+            if medium != "0":
+                query3 = ("INSERT INTO CommissionMediums(commissionID, mediumID) VALUES((SELECT commissionID from Commissions WHERE Commissions.dateRequested=%s AND customerID=%s), %s);")               
+                cur = mysql.connection.cursor()
+                for mediumtype in medium:
+                    cur.execute(query3, (dateRequested, customer, mediumtype))
+                    mysql.connection.commit()
+
+            if genre != "0":
+                query4 = ("INSERT INTO CommissionGenres(commissionID, genreID) VALUES((SELECT commissionID from Commissions WHERE Commissions.dateRequested=%s AND customerID=%s), %s);")               
+                cur = mysql.connection.cursor()
+                for genretype in genre:
+                    cur.execute(query4, (dateRequested, customer, genretype))
+                    mysql.connection.commit()
+                    
+            return redirect("/commissions")
+        
+    if request.method == "GET":
+        # Grab Artist data so we send it to our template to display
+        query = ("SELECT Commissions.commissionID as commissionID, GROUP_CONCAT(DISTINCT Artists.artistID) as artistID, Commissions.requestStatus as requestStatus, GROUP_CONCAT(DISTINCT Genres.type) as genre, GROUP_CONCAT(DISTINCT Mediums.type) AS medium, Commissions.dateRequested as dateRequested, "
+                   "Commissions.dateCompleted as dateCompleted, Commissions.price as price, Customers.customerID as customerID "
+                   "FROM Commissions "
+                   "LEFT JOIN ArtistCommissions ON Commissions.commissionID = ArtistCommissions.commissionID "
+                   "LEFT JOIN Artists ON ArtistCommissions.artistID = Artists.artistID "
+                   "LEFT JOIN CommissionGenres ON Commissions.commissionID = CommissionGenres.commissionID "
+                   "LEFT JOIN Genres ON CommissionGenres.genreID = Genres.genreID "
+                   "LEFT JOIN CommissionMediums ON Commissions.commissionID = CommissionMediums.commissionID "
+                   "LEFT JOIN Mediums ON CommissionMediums.mediumID = Mediums.mediumID "
+                   "LEFT JOIN Customers ON Commissions.customerID = Customers.customerID "
+				   " GROUP BY commissionID;")
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        commissionTableDisplay = cur.fetchall()
+
+        queryCommissionID = ("SELECT Distinct CommissionID "
+                        "FROM Commissions "
+                        "ORDER BY CommissionID;")
+        cur = mysql.connection.cursor()
+        cur.execute(queryCommissionID)
+        commissionIDDisplay = cur.fetchall()
+    
+        queryGenre = "SELECT Distinct genreID, type AS type FROM Genres;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryGenre)
+        genreDisplay = cur.fetchall()
+
+        queryMedium = "SELECT Distinct mediumID, type AS type FROM Mediums;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryMedium)
+        mediumDisplay = cur.fetchall()
+
+        queryArtist = "SELECT Distinct artistID, email FROM Artists;"
+        ur = mysql.connection.cursor()
+        cur.execute(queryArtist)
+        artistDisplay = cur.fetchall()
+
+        queryCustomer = "SELECT Distinct customerID, email FROM Customers;"
+        ur = mysql.connection.cursor()
+        cur.execute(queryCustomer)
+        customerDisplay = cur.fetchall()
+
+        return render_template("commissions.j2", commissionTableDisplay=commissionTableDisplay, commissionIDDisplay=commissionIDDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, artistDisplay=artistDisplay, customerDisplay=customerDisplay)
+# delete
+@app.route("/deleteCommission/<int:commissionID>")
+def deleteCommission(commissionID):
+    query = "DELETE FROM Commissions WHERE commissionID = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (commissionID,))
+    mysql.connection.commit()
+    return redirect("/commissions")
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------EditCommissions---
+
+@app.route("/editCommission/<int:commissionID>", methods=["POST", "GET"])
+def editCommission(commissionID):
+    if request.method == "GET":
+        queryComission = "SELECT * FROM Commissions WHERE commissionID=%s;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryComission, (commissionID,))
+        CommissionDisplay = cur.fetchall()
+
+        queryGenre = "SELECT Distinct genreID, type AS type FROM Genres;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryGenre)
+        genreDisplay = cur.fetchall()
+
+        queryMedium = "SELECT Distinct mediumID, type AS type FROM Mediums;"
+        cur = mysql.connection.cursor()
+        cur.execute(queryMedium)
+        mediumDisplay = cur.fetchall()
+
+        queryArtist = "SELECT Distinct artistID, email FROM Artists;"
+        ur = mysql.connection.cursor()
+        cur.execute(queryArtist)
+        artistDisplay = cur.fetchall()
+
+        queryCustomer = "SELECT Distinct customerID, email FROM Customers;"
+        ur = mysql.connection.cursor()
+        cur.execute(queryCustomer)
+        customerDisplay = cur.fetchall()
+
+        querycurrGenre = ("SELECT CommissionGenres.genreID AS genreID, type AS type FROM CommissionGenres " 
+                "LEFT JOIN Commissions ON Commissions.commissionID = CommissionGenres.commissionID "
+                "LEFT JOIN Genres ON Genres.genreID = CommissionGenres.genreID "
+                "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrGenre, (commissionID,))
+        currGenreList = cur.fetchall()
+
+        querycurrMedium = ("SELECT CommissionMediums.mediumID AS mediumID, type AS type FROM CommissionMediums " 
+                        "LEFT JOIN Commissions ON Commissions.commissionID = CommissionMediums.commissionID "
+                        "LEFT JOIN Mediums ON Mediums.mediumID = CommissionMediums.mediumID "
+                        "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrMedium, (commissionID,))
+        currMediumList = cur.fetchall()
+
+        querycurrArtist = ("SELECT ArtistCommissions.artistID AS artistID, email AS email FROM ArtistCommissions " 
+                        "LEFT JOIN Artists ON Artists.artistID = ArtistCommissions.artistID "
+                        "LEFT JOIN Commissions ON Commissions.commissionID = ArtistCommissions.commissionID "
+                        "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrArtist, (commissionID,))
+        currArtistList = cur.fetchall()
+        
+        return render_template("editCommission.j2", CommissionDisplay=CommissionDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, artistDisplay=artistDisplay, customerDisplay=customerDisplay, currGenreList=currGenreList, currMediumList=currMediumList, currArtistList=currArtistList)
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Customers-------
+@app.route('/customers', methods=["POST", "GET"])
 def customers():
-    return render_template("customers.j2")
+    if request.method == "POST":
+        if request.form.get("insertCustomer"): # submit button pressed
+            email = request.form["email"]
+            name = request.form["name"]
+            birthday = request.form["birthday"]
+
+            # account for null birthday
+            if birthday == "":
+                query = ("INSERT INTO Customers (email, name) VALUES(%s, %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name))
+                mysql.connection.commit()
+
+            # not null birthday
+            else:
+                query = ("INSERT INTO Customers (email, name, birthday) VALUES(%s, %s, %s);")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (email, name, birthday))
+                mysql.connection.commit()
+        return redirect("/customers")
+        
+    if request.method == "GET":
+        # Grab Artist data so we send it to our template to display
+        query = ("SELECT Customers.customerID as customerID, Customers.email as  email, Customers.name as name, Customers.birthday as birthday, COUNT(DISTINCT Commissions.commissionID) as totalOrders "
+                 "FROM Customers "
+                 "LEFT JOIN Commissions ON Commissions.customerID = Customers.customerID "
+                 "GROUP BY customerID;")
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        customerTableDisplay = cur.fetchall()
+    return render_template("customers.j2", customerTableDisplay=customerTableDisplay)
+
+# delete
+@app.route("/deleteCustomer/<int:customerID>")
+def deleteCustomer(customerID):
+    query = "DELETE FROM Customers WHERE customerID = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (customerID,))
+    mysql.connection.commit()
+    return redirect("/customers")
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Edit Customers-----
+
+# route for edit functionality, updating the attributes of a person in bsg_people
+# similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
+@app.route("/editCustomer/<int:customerID>", methods=["POST", "GET"])
+def editCustomers(customerID):
+    if request.method == "GET":
+    # Grab Artist data so we send it to our template to display
+        query = "SELECT * FROM Customers WHERE customerID = %s;"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (customerID,)) #it doesn't work without the comma
+        editCustomerData = cur.fetchall()
+        return render_template("editCustomer.j2", editCustomerData=editCustomerData)
+
+    if request.method == "POST":
+       if request.form.get("editCustomer"): # submit button pressed
+            email = request.form["email"]
+            name = request.form["name"]
+            birthday = request.form["birthday"]
+
+            # Update email, name only
+            query = ("UPDATE Customers SET email = %s, name = %s WHERE customerID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (email, name, customerID))
+            mysql.connection.commit()
+            
+            # Update birthday
+            if birthday != "":
+                query = ("UPDATE Customers SET birthday = %s WHERE customerID = %s;")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (birthday, customerID))
+                mysql.connection.commit()
+            return redirect("/customers")
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Genres----------
+
+
 
 @app.route('/genres')
 def genress():
     return render_template("genres.j2")
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Mediums---------
+
+
 @app.route('/mediums')
 def mediums():
     return render_template("mediums.j2")
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Artists---------
 
 
 @app.route("/artists", methods=["POST", "GET"])
@@ -150,6 +379,8 @@ def deleteArtist(artistID):
 
     return redirect("/artists")
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------Edit Artists-----
+
 # route for edit functionality, updating the attributes of a person in bsg_people
 # similar to our delete route, we want to the pass the 'id' value of that person on button click (see HTML) via the route
 @app.route("/editArtist/<int:artistID>", methods=["POST", "GET"])
@@ -246,20 +477,13 @@ def editArtist(artistID):
                     mysql.connection.commit()
             
             return redirect("/artists")
-       
-       
 
-
-
-
-
-    
 
 # Listener
 if __name__ == "__main__":
 
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=59576, debug=True)
+    app.run(port=59575, debug=True)
 
     # 59575 
     # gunicorn -b 0.0.0.0:59576 -D app:app

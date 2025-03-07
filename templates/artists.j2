@@ -95,7 +95,6 @@
 
                     <label for="genre">Artist Genre</label>
                     <select name="genre" id="genre" multiple>
-                      <option value="0" selected="selected">None</option>
                       {% for genre in genreDisplay %}
                       <option value ={{genre['genreID']}}>{{genre['type']}}</option>
                       {% endfor %}
@@ -103,7 +102,6 @@
 
                     <label for="medium">Artist Medium</label>
                     <select name="medium" id="medium" multiple>
-                      <option value="0" selected="selected">None</option>
                       {% for medium in mediumDisplay %}
                       <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
                       {% endfor %}

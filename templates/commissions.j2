@@ -50,176 +50,94 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>Request Complete</td>
-                        <td>Steampunk</td>
-                        <td>Oil Paint</td>
-                        <td>2017-07-22 02:10:02</td>
-                        <td>2017-08-02</td>
-                        <td>50.00</td>
-                        <td>1</td>
+                      {% for item in commissionTableDisplay %}
+                    <tr>
+                        <td>{{item['commissionID']}}</td>
+                        <td>{{item['artistID']}}</td>
+                        <td>{{item['requestStatus']}}</td>
+                        <td>{{item['genre']}}</td>
+                        <td>{{item['medium']}}</td>
+                        <td>{{item['dateRequested']}}</td>
+                        <td>{{item['dateCompleted']}}</td>
+                        <td>{{item['price']}}</td>
+                        <td>{{item['customerID']}}</td>
+                        
                         <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        <a href="editCommission/{{item.commissionID}}" class="btn btn-default">
+                        <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </a>
                         </td>
 
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>3</td>
-                        <td>Request Complete</td>
-                        <td>Horror</td>
-                        <td>Digital</td>
-                        <td>2018-02-02 12:01:05</td>
-                        <td>2018-03-20</td>
-                        <td>75.00</td>
-                        <td>1</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
                         <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        <a href="deleteCommission/{{item.commissionID}}" class="btn btn-default">
+                        <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </a>
                         </td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>2</td>
-                        <td>Request Complete</td>
-                        <td>Horror</td>
-                        <td>Digital</td>
-                        <td>2020-01-16 10:22:32</td>
-                        <td>2020-11-19</td>
-                        <td>12.32</td>
-                        <td>2</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td>3</td>
-                        <td>Request Complete</td>
-                        <td>Cute</td>
-                        <td>Watercolor</td>
-                        <td>2021-10-02 07:18:00</td>
-                        <td>2021-11-05</td>
-                        <td>20.00</td>
-                        <td>3</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>5</td>
-                        <td>a</td>
-                        <td>Request Unclaimed</td>
-                        <td>Modern</td>
-                        <td>Gouache</td>
-                        <td>2021-12-20 20:00:02</td>
-                        <td>NULL</td>
-                        <td>95.50</td>
-                        <td>3</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-                      </tr>
+                        						    
+                    </tr>
+                    {% endfor %}
                     </tbody>
                   </table>
             </article>
 
-         <article id = "commissionForms">
+        <article id = "commissionForms">
+          <!-- insert -->
           <table>
             <tbody>
               <tr>
                 <td>
-                <!-- insert -->
-                <form>
-                  <legend>Add Commission</legend>
-                  <p>
-                    Create a new commission. When applicable, specify an involved artist, the customer, a genre, and a medium. 
+                  <form id="addCommission" action="/commissions" method="post">
+                    <legend>Add Commission</legend>
+                    <p>Create a new commission. When applicable, specify an involved artist, the customer, a genre, and a medium. 
                     Indicate the status of the commission, the date the commission was requested, and, if finished, the date it
-                    was completed. Input the price.
-                  </p>
-                  <label for="artists">Artists</label>
-                  <input type="text" id="artists" name="artists">
-                  <label for="customers">Customers</label>
-                  <input type="text" id="customers" name="customers">
+                    was completed. Input the price.</p>
 
-                  <label for="genre">Commission Genre</label>
-                  <input type="text" id="genre" name="genre">
+                    <label for="artists">Artists</label>
+                    <select name="artists" id="artists" multiple required>
+                    {% for artist in artistDisplay %}
+                    <option value ={{artist['artistID']}}>{{artist['email']}}</option>
+                    {% endfor %}
+                    </select>
+                    
+                    <label for="customers">Customers</label>
+                    <select id="customers" name="customer" required>
+                    {% for customer in customerDisplay %}
+                    <option value ={{customer['customerID']}}>{{customer['email']}}</option>
+                    {% endfor %}
+                    </select>
 
-                  <label for="medium">Commission Medium</label>
-                  <input type="text" id="medium" name="medium">
+                    
+                    <label for="genre">Commission Genre</label>
+                    <select name="genre" id="genre" multiple>
+                      {% for genre in genreDisplay %}
+                      <option value ={{genre['genreID']}}>{{genre['type']}}</option>
+                      {% endfor %}
+                    </select>
+
+                    <label for="medium">Commission Medium</label>
+                    <select name="medium" id="medium" multiple>
+                      {% for medium in mediumDisplay %}
+                      <option value ={{medium['mediumID']}}>{{medium['type']}}</option>
+                      {% endfor %}
+                    </select>
+                    
+
+                    <label for="dateRequested">Date Requested:</label>
+                    <input type="date" id="dateRequested" name="dateRequested" required>
+
+                    <label for="price">Price: </label>
+                    <input type="number" name="price" id = "price" min="0" placeholder=0.00 required>                  
                   
-                  <label for="requestStatus">Request Status:</label>
-                  <select name="requestStatus" id="requestStatus" required>
-                      <option value="0">Request Unclaimed</option>
-                      <option value="1">Request Claimed</option>
-                      <option value="2">Request Complete</option>
-                      <option value="3">Request Cancelled</option>
-                  </select>
+                    <label for="insertCommission"></label>
+                    <input type="submit" value="Add Commission" name="insertCommission">
+                    
 
-                  <label for="dateRequested">Date Requested:</label>
-                  <input type="datetime-local" id="dateRequested" name="dateRequested" required>
-
-                  <label for="dateCompleted">Date Completed:</label>
-                  <input type="date" id="dateCompleted" name="dateCompleted">
-
-                  <label for="price">Price: </label>
-                  <input type="number" id = "price" min="0" placeholder=0.00 required>
-                  <input type="submit"/>
-                </form>
-              </td>
-              <td>
-                <!-- insert -->
-                <form>
-                  <legend>Edit Commission</legend>
-                  <p>Change the details of a commission. You can also add a genre, medium, or participating artist.</p>
-                  <label for="artists">Artists</label>
-                  <input type="text" id="artists" name="artists">
-
-                  <label for="genre">Commission Genre</label>
-                  <input type="text" id="genre" name="genre">
-
-                  <label for="medium">Commission Medium</label>
-                  <input type="text" id="medium" name="medium">
-                  
-                  <label for="requestStatus">Request Status</label>
-                  <select name="requestStatus" id="requestStatus" required>
-                      <option value="0">Request Unclaimed</option>
-                      <option value="1">Request Claimed</option>
-                      <option value="2">Request Complete</option>
-                      <option value="3">Request Cancelled</option>
-                  </select>
-
-                  <label for="dateCompleted">Date Completed:</label>
-                  <input type="date" id="dateCompleted" name="dateCompleted">
-
-                  <label for="price">Price: </label>
-                  <input type="number" id = "price" min="0" placeholder=0.00 required>
-
-                  <label for="customerID">Customer ID: </label>
-                  <input type="number" id = "customerID" min="1" placeholder=1 required>
-                  <input type="submit"/>
-                </form>
-              </td>
+                  </form>
+                </td>
               </tr>
             </tbody>
           </table>
-          
+         
          </article>
         </section>
     </main>

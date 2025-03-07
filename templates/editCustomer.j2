@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Edit Customer</h1> 
+    </header>
+
+    <main>
+        <section>
+            <!-- table -->
+                <form id="editCustomer" action="/editCustomer/{{editCustomerData[0].customerID}}" method="post">
+                <legend>Edit Customer</legend>
+                <p>Edit an existing customer's details.</p>
+                    
+                <label for="customerID">Customer ID</label>
+                <input type="hidden" name="customerID" id="customerID" required>
+                    {% for customer in editCustomerData %}
+                    <option value ="{{customer['customerID']}}">{{customer['customerID']}}</option>
+                    {% endfor %}
+                </select>
+
+                {% for customer in editCustomerData %}
+                <label for="email">Customer's Email: </label>
+                <input type="email" name="email" id = "email" pattern="[^ @]+@[^ @]+.[a-z]+"value={{customer['email']}} required>
+                
+                <label for="name">Customer's full name: </label>
+                
+                <input type="text" name="name" id = "name" value="{{customer['name']}}" required>
+                {% endfor %}
+			
+				{% for customer in editCustomerData %}
+				<label for="birthday">Birthday:</label>
+                <input type="date" id="birthday" name="birthday" value={{customer['birthday']}}>
+                {% endfor %}      
+      
+                <label for="submit"></label>
+                <input type="submit" value="editCustomer" name="editCustomer"/>
+                </form>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
+</body>
+</html>

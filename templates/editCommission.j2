@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Edit Commission</h1> 
+    </header>
+
+    <main>
+        <section>
+            <!-- table -->
+                <form id="editCommission" action="/editCommission/{{CommissionDisplay[0].commissionID}}" method="post">
+                <legend>Edit Commission</legend>
+
+                <p>Edit an existing Commission's details.</p>
+                    
+                <label for="commissionID">Commission ID</label>
+                <input type="hidden" name="commissionID" id="commissionID" required>
+                    {% for commission in CommissionDisplay %}
+                    <option value ="{{commission['commissionID']}}">{{commission['commissionID']}}</option>
+                    {% endfor %}
+                </select>
+
+
+                <label for="artists">Artists</label>
+                <select name="artists" id="artists" multiple required>
+                    {% for artist in artistDisplay %}
+                    <option value ={{artist['artistID']}}{% if artist in currArtistList %}Selected{% endif %}>{{artist['email']}}</option>
+                    {% endfor %}
+                </select>
+                    
+                <label for="customers">Customers</label>
+                <select id="customers" name="customer" required>
+                    {% for customer in customerDisplay %}
+                    <option value ={{customer['customerID']}}>{{customer['email']}}</option>
+                    {% endfor %}
+                </select>
+
+                    
+                <label for="genre">Commission Genre</label>
+                <select name="genre" id="genre" multiple>
+                    {% for genre in genreDisplay %}
+                    <option value ={{genre['genreID']}} {% if genre in currGenreList %}Selected{% endif %} >{{genre['type']}}</option>
+                    {% endfor %}
+
+                </select>
+
+                <label for="medium">Commission Medium</label>
+                <select name="medium" id="medium" multiple>
+                    {% for medium in mediumDisplay %}
+                    <option value ={{medium['mediumID']}} {% if medium in currMediumList %}Selected{% endif %} >{{medium['type']}}</option>
+                    {% endfor %}
+                </select>
+                    
+                <label for="requestStatus">Request Status:</label>
+                <select name="requestStatus" id="requestStatus" required>
+                    <option value="1">Request Unclaimed</option>
+                    <option value="2">Request Claimed</option>
+                    <option value="3">Request Complete</option>
+                    <option value="4">Request Cancelled</option>
+                </select>
+
+
+                <label for="dateRequested">Date Requested:</label>
+                <input type="date" id="dateRequested" name="dateRequested" required>
+
+                <label for="price">Price: </label>
+                <input type="number" name="price" id = "price" min="0" placeholder=0.00>
+
+
+                <label for="submit"></label>
+                <input type="submit" value="editCommission" name="editCommission"/>
+                </form>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
+</body>
+</html>
