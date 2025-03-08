@@ -13,9 +13,9 @@ logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_bosleyj'
-app.config['MYSQL_PASSWORD'] = '5957' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_bosleyj'
+app.config['MYSQL_USER'] = 'cs340_connelan'
+app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_connelan'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
@@ -128,28 +128,121 @@ def deleteCommission(commissionID):
 def editCommission(commissionID):
     if request.method == "POST":
        if request.form.get("editCommission"): # submit button pressed
-            artists = request.form["artists"]
+            artists = request.form.getlist("artists")
+            genres = request.form.getlist("genre")
+            mediums = request.form.getlist("medium")
             customer = request.form["customer"]
-            genre = request.form["genre"]
-            medium = request.form["medium"]
             requestStatus = request.form["requestStatus"]
             dateRequested = request.form["dateRequested"]
             dateCompleted = request.form["dateCompleted"]
             price = request.form["price"]
 
-            # Update email, name only
-            query = ("UPDATE Customers SET email = %s, name = %s WHERE customerID = %s;")
+            app.logger.info({"artists":artists, "genres":genres, "mediums":mediums, "customer":customer, "requestStatus":requestStatus, 
+                             "dateRequested":dateRequested, "dateCompleted":dateCompleted, "price":price})
+
+            # update customer, requestStatus, dateRequested, price
+            query = ("UPDATE Commissions SET customerID = %s, requestStatus = %s, dateRequested = %s, price = %s "
+                     "WHERE commissionID = %s;")
             cur = mysql.connection.cursor()
-            cur.execute(query, (email, name, customerID))
+            cur.execute(query, (customer, requestStatus, dateRequested, price, commissionID))
             mysql.connection.commit()
-            
-            # Update birthday
-            if birthday != "":
-                query = ("UPDATE Customers SET birthday = %s WHERE customerID = %s;")
+
+            # dateCompleted
+            if dateCompleted is not None:
+                query = ("UPDATE Commissions SET dateCompleted = %s "
+                        "WHERE commissionID = %s;")
                 cur = mysql.connection.cursor()
-                cur.execute(query, (birthday, customerID))
+                cur.execute(query, (dateCompleted, commissionID))
                 mysql.connection.commit()
-            return redirect("/customers")
+
+            # artists ----------------------------------------------------------
+            query = ("SELECT ArtistCommissions.artistID FROM ArtistCommissions "
+                    "WHERE ArtistCommissions.commissionID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (commissionID,))
+            currArtistList = cur.fetchall()
+            # turn into just ID list
+            currArtistIDs = []
+            for currArtist in currArtistList:
+                currArtistIDs.append(currArtist['artistID'])
+            
+            # delete artists present in database but not selected in form
+            currArtistIDsSave = currArtistIDs.copy() # so we don't mess up list by removing during iteration
+            for currArtist in currArtistIDs:
+                if currArtist not in artists: # not selected on form, remove
+                    currArtistIDsSave.remove(currArtist) # so we don't add it back later
+                    query = ("DELETE FROM ArtistCommissions WHERE artistID = %s AND commissionID = %s; ")
+                    cur.execute(query, (currArtist, commissionID,))
+                    mysql.connection.commit()
+            currArtistIDs = currArtistIDsSave
+
+            # add artists selected in form not in database yet
+            for currArtist in artists:
+                if currArtist not in currArtistIDs:
+                    query = ("INSERT INTO ArtistCommissions (commissionID, artistID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (commissionID, currArtist))
+                    mysql.connection.commit()
+            
+            # genres ----------------------------------------------------------
+            query = ("SELECT CommissionGenres.genreID FROM CommissionGenres "
+                    "WHERE CommissionGenres.commissionID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (commissionID,))
+            currGenreList = cur.fetchall()
+            # turn into just ID list
+            currGenreIDs = []
+            for currGenre in currGenreList:
+                currGenreIDs.append(currGenre['genreID'])
+            
+            currGenreIDsSave = currGenreIDs.copy()
+            # delete genres
+            for currGenre in currGenreIDs:
+                if currGenre not in genres: # not selected on form, remove
+                    currGenreIDsSave.remove(currGenre) # so we don't add it back later
+                    query = ("DELETE FROM CommissionGenres WHERE genreID = %s AND commissionID = %s; ")
+                    cur.execute(query, (currGenre, commissionID,))
+                    mysql.connection.commit()
+            currGenreIDs = currGenreIDsSave
+
+            # add genres
+            for currGenre in genres:
+                if currGenre not in currGenreIDs:
+                    query = ("INSERT INTO CommissionGenres (commissionID, genreID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (commissionID, currGenre))
+                    mysql.connection.commit()
+
+            # mediums ----------------------------------------------------------
+            query = ("SELECT CommissionMediums.mediumID FROM CommissionMediums "
+                                "WHERE CommissionMediums.commissionID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (commissionID,))
+            currMediumList = cur.fetchall()
+            # turn into just ID list
+            currMediumIDs = []
+            for currMedium in currMediumList:
+                currMediumIDs.append(currMedium['mediumID'])
+            
+            currMediumIDsSave = currMediumIDs.copy()
+            # delete mediums
+            for currMedium in currMediumIDs:
+                if currMedium not in mediums: # not selected on form, remove
+                    currMediumIDsSave.remove(currMedium) # so we don't add it back later
+                    query = ("DELETE FROM CommissionMediums WHERE mediumID = %s AND commissionID = %s; ")
+                    cur.execute(query, (currMedium, commissionID,))
+                    mysql.connection.commit()
+            currMediumIDs = currMediumIDsSave
+
+            # add mediums
+            for currMedium in mediums:
+                if currMedium not in currMediumIDs:
+                    query = ("INSERT INTO CommissionMediums (commissionID, mediumID) VALUES(%s, %s); ")
+                    cur = mysql.connection.cursor()
+                    cur.execute(query, (commissionID, currMedium))
+                    mysql.connection.commit()
+
+            return redirect("/commissions")
 
     if request.method == "GET":
         queryComission = "SELECT * FROM Commissions WHERE commissionID=%s;"
@@ -625,8 +718,8 @@ def editArtist(artistID):
        if request.form.get("editArtist"): # submit button pressed
             email = request.form["email"]
             name = request.form["name"]
-            genre = request.form.getlist("genre") # id
-            medium = request.form.getlist("medium") # id
+            formGenres = request.form.getlist("genre") # id
+            formMediums = request.form.getlist("medium") # id
             
 
             # Update email, name only
@@ -635,44 +728,67 @@ def editArtist(artistID):
             cur.execute(query, (email, name, artistID))
             mysql.connection.commit()
             
-            query = ("SELECT ArtistGenres.genreID FROM ArtistGenres " 
-                        "LEFT JOIN Artists ON Artists.artistID = ArtistGenres.artistID "
-                        "WHERE Artists.artistID = %s;")
+            # genres ----------------------------------------------------------
+            query = ("SELECT ArtistGenres.genreID FROM ArtistGenres "
+                    "WHERE ArtistGenres.artistID = %s;")
             cur = mysql.connection.cursor()
             cur.execute(query, (artistID,))
             currGenreList = cur.fetchall()
+            # turn into just ID list
+            currGenreIDs = []
+            for currGenre in currGenreList:
+                currGenreIDs.append(currGenre['genreID'])
+            
+            currGenreIDsSave = currGenreIDs.copy()
+            # delete genres
+            for currGenre in currGenreIDs:
+                if currGenre not in formGenres: # not selected on form, remove
+                    app.logger.info(currGenre)
+                    currGenreIDsSave.remove(currGenre) # so we don't add it back later
+                    query = ("DELETE FROM ArtistGenres WHERE genreID = %s AND artistID = %s; ")
+                    cur.execute(query, (currGenre, artistID,))
+                    mysql.connection.commit()
 
-            query = ("DELETE FROM ArtistGenres WHERE artistID = %s;")
-            cur = mysql.connection.cursor()
-            cur.execute(query, (artistID,))
-            mysql.connection.commit()
+            app.logger.info(currGenreIDs)
+            app.logger.info(currGenreIDsSave)
+            currGenreIDs = currGenreIDsSave
 
             # add genres
-            for currGenreID in genre:
-                if currGenreID not in currGenreList:
+            for currGenre in formGenres:
+                if currGenre not in currGenreIDs:
+                    app.logger.info(currGenre)
                     query = ("INSERT INTO ArtistGenres (artistID, genreID) VALUES(%s, %s); ")
                     cur = mysql.connection.cursor()
-                    cur.execute(query, (artistID, currGenreID))
+                    cur.execute(query, (artistID, currGenre))
                     mysql.connection.commit()
-            
-            # ArtistMediums
-            genreQuery = ("SELECT ArtistMediums.mediumID FROM ArtistMediums " 
-                        "LEFT JOIN Artists ON Artists.artistID = ArtistMediums.artistID "
-                        "WHERE Artists.artistID = %s;")
-            cur.execute(genreQuery, (artistID,))
-            currMediumList = cur.fetchall()
 
-            query = ("DELETE FROM ArtistMediums WHERE artistID = %s;")
+            # mediums ----------------------------------------------------------
+            query = ("SELECT ArtistMediums.mediumID FROM ArtistMediums "
+                                "WHERE ArtistMediums.artistID = %s;")
             cur = mysql.connection.cursor()
             cur.execute(query, (artistID,))
-            mysql.connection.commit()
+            currMediumList = cur.fetchall()
+            # turn into just ID list
+            currMediumIDs = []
+            for currMedium in currMediumList:
+                currMediumIDs.append(currMedium['mediumID'])
+            
+            currMediumIDsSave = currMediumIDs.copy()
+            # delete mediums
+            for currMedium in currMediumIDs:
+                if currMedium not in formMediums: # not selected on form, remove
+                    currMediumIDsSave.remove(currMedium) # so we don't add it back later
+                    query = ("DELETE FROM ArtistMediums WHERE mediumID = %s AND artistID = %s; ")
+                    cur.execute(query, (currMedium, artistID,))
+                    mysql.connection.commit()
+            currMediumIDs = currMediumIDsSave
 
             # add mediums
-            for currMediumID in medium:
-                if currMediumID not in currMediumList:
+            for currMedium in formMediums:
+                if currMedium not in currMediumIDs:
                     query = ("INSERT INTO ArtistMediums (artistID, mediumID) VALUES(%s, %s); ")
                     cur = mysql.connection.cursor()
-                    cur.execute(query, (artistID, currMediumID))
+                    cur.execute(query, (artistID, currMedium))
                     mysql.connection.commit()
             
             return redirect("/artists")

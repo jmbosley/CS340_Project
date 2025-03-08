@@ -30,7 +30,7 @@
 
 
                 <label for="artists">Artists</label>
-                <select name="artists" id="artists" multiple required>
+                <select name="artists" id="artists" multiple>
                     {% for artist in artistDisplay %}
                     <option value ={{artist['artistID']}} {% if artist in currArtistList %}Selected{% endif %} >{{artist['email']}}</option>
                     
@@ -75,9 +75,9 @@
                 <label for="dateCompleted">Date Completed:</label>
                 <input type="date" id="dateCompleted" name="dateCompleted" value={{currDateCompleted}}>
 
+                <!-- citation: step idea for money input taken from Andrea Ligios' answer at https://stackoverflow.com/a/14651044 -->
                 <label for="price">Price: </label>
-                <input type="number" name="price" id = "price" min="0" placeholder=0.00 value={{currPrice}}>
-
+                <input type="number" name="price" id = "price" min="0.01" step="0.01" placeholder=0.00 value={{currPrice}}>
 
                 <label for="submit"></label>
                 <input type="submit" value="Edit Commission" name="editCommission"/>

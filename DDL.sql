@@ -109,7 +109,7 @@ CREATE OR REPLACE TABLE CommissionGenres(
 -- Shows which commissions artists are working on
 CREATE OR REPLACE TABLE ArtistCommissions(
 	artistCommissionID INT AUTO_INCREMENT,
-	artistID INT NOT NULL,
+	artistID INT, -- changed 3/8/25
 	commissionID INT NOT NULL,
 	FOREIGN KEY (commissionID) REFERENCES Commissions(commissionID)
 		ON DELETE CASCADE,
