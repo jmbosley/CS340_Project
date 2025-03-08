@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Edit Genre</h1> 
+    </header>
+
+    <main>
+        <section>
+            <!-- table -->
+                <form id="editGenre" action="/editGenre/{{editGenreData[0].genreID}}" method="post">
+                <legend>Edit Genre</legend>
+                <p>Edit the type of an existing genre.</p>
+                    
+                <label for="genreID">Genre ID</label>
+                <input type="hidden" name="genreID" id="genreID" required>
+                    {% for genre in editGenreData %}
+                    <option value ="{{genre['genreID']}}">{{genre['genreID']}}</option>
+                    {% endfor %}
+                </select>
+
+                {% for genre in editGenreData %}
+                <label for="type">Genre Type: </label>
+                <input type="text" name="type" id = "type" value="{{genre['type']}}" required>
+                {% endfor %}
+            
+                <label for="editGenre">Submit</label>
+                <input type="submit" value="editGenre" name="editGenre">
+                </form>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
+</body>
+</html>

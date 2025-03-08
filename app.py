@@ -250,18 +250,134 @@ def editCustomers(customerID):
             return redirect("/customers")
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------Genres----------
 
+# main page + add
+@app.route('/genres', methods=["POST", "GET"])
+def genres():
+    # load table/dropdowns
+    if request.method == "GET":
+        # Grab Genres data so we send it to our template to display
+        query = ("SELECT Genres.genreID AS genreID, Genres.type AS type, COUNT(DISTINCT CASE WHEN ArtistGenres.genreID = Genres.genreID THEN ArtistGenres.artistID END) AS artistCount, COUNT(DISTINCT CASE WHEN CommissionGenres.genreID = Genres.genreID THEN CommissionGenres.commissionID END) AS commissionCount "
+                "FROM Genres "
+                "LEFT JOIN CommissionGenres ON CommissionGenres.genreID = Genres.genreID "
+                "LEFT JOIN ArtistGenres ON ArtistGenres.genreID = Genres.genreID "
+                "GROUP BY Genres.genreID;"
+            
+        )
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        genreTableDisplay = cur.fetchall()
 
+        return render_template("genres.j2", genreTableDisplay=genreTableDisplay)
 
-@app.route('/genres')
-def genress():
-    return render_template("genres.j2")
+    # add genre
+    if request.method == "POST":
+        if request.form.get("insertGenre"): # submit button pressed
+            type = request.form["type"]
 
+            query = ("INSERT INTO Genres (type) VALUES (%s);")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (type,))
+            mysql.connection.commit()
+
+        return redirect("/genres")
+
+# edit     
+@app.route("/editGenre/<int:genreID>", methods=["POST", "GET"])
+def editGenre(genreID):
+    if request.method == "GET":
+    # Grab genre data so we send it to our template to display
+        query = "SELECT * FROM Genres WHERE genreID = %s;"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (genreID,))
+        editGenreData = cur.fetchall()
+    
+        return render_template("editGenre.j2", editGenreData=editGenreData)
+
+    if request.method == "POST":
+        if request.form.get("editGenre"): # submit button pressed
+            type = request.form["type"]
+
+            query = ("UPDATE Genres SET type = %s WHERE genreID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (type, genreID))
+            mysql.connection.commit()
+            
+            return redirect("/genres")
+
+# delete
+@app.route("/deleteGenre/<int:genreID>")
+def deleteGenre(genreID):
+    query = "DELETE FROM Genres WHERE genreID = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (genreID,))
+    mysql.connection.commit()
+
+    return redirect("/genres")
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------Mediums---------
 
-
-@app.route('/mediums')
+# main page + add
+@app.route('/mediums', methods=["POST", "GET"])
 def mediums():
-    return render_template("mediums.j2")
+    # load table/dropdowns
+    if request.method == "GET":
+        # Grab Mediums data so we send it to our template to display
+        query = ("SELECT Mediums.mediumID AS mediumID, Mediums.type AS type, COUNT(DISTINCT CASE WHEN ArtistMediums.mediumID = Mediums.mediumID THEN ArtistMediums.artistID END) AS artistCount, COUNT(DISTINCT CASE WHEN CommissionMediums.mediumID = Mediums.mediumID THEN CommissionMediums.commissionID END) AS commissionCount "
+                "FROM Mediums "
+                "LEFT JOIN CommissionMediums ON CommissionMediums.mediumID = Mediums.mediumID "
+                "LEFT JOIN ArtistMediums ON ArtistMediums.mediumID = Mediums.mediumID "
+                "GROUP BY Mediums.mediumID;"
+            
+        )
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mediumTableDisplay = cur.fetchall()
+
+        return render_template("mediums.j2", mediumTableDisplay=mediumTableDisplay)
+
+    # add medium
+    if request.method == "POST":
+        if request.form.get("insertMedium"): # submit button pressed
+            type = request.form["type"]
+
+            query = ("INSERT INTO Mediums (type) VALUES (%s);")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (type,))
+            mysql.connection.commit()
+
+        return redirect("/mediums")
+
+# edit     
+@app.route("/editMedium/<int:mediumID>", methods=["POST", "GET"])
+def editMedium(mediumID):
+    if request.method == "GET":
+    # Grab medium data so we send it to our template to display
+        query = "SELECT * FROM Mediums WHERE mediumID = %s;"
+        cur = mysql.connection.cursor()
+        cur.execute(query, (mediumID,))
+        editMediumData = cur.fetchall()
+    
+        return render_template("editMedium.j2", editMediumData=editMediumData)
+
+    if request.method == "POST":
+        if request.form.get("editMedium"): # submit button pressed
+            type = request.form["type"]
+
+            query = ("UPDATE Mediums SET type = %s WHERE mediumID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (type, mediumID))
+            mysql.connection.commit()
+            
+            return redirect("/mediums")
+
+# delete
+@app.route("/deleteMedium/<int:mediumID>")
+def deleteMedium(mediumID):
+    query = "DELETE FROM Mediums WHERE mediumID = %s;"
+    cur = mysql.connection.cursor()
+    cur.execute(query, (mediumID,))
+    mysql.connection.commit()
+
+    return redirect("/mediums")
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------Artists---------
 
@@ -271,7 +387,7 @@ def artists():
     
     # edit
     if request.method == "POST":
-        if request.form.get("insertArtist"): # submit button pressed
+        if request.form.get("insertArtist"): # name of submit button is "addArtist"
             email = request.form["email"]
             name = request.form["name"]
             genre = request.form.getlist("genre") # id

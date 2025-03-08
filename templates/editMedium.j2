@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Find an Artist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Edit Medium</h1> 
+    </header>
+
+    <main>
+        <section>
+            <!-- table -->
+                <form id="editMedium" action="/editMedium/{{editMediumData[0].mediumID}}" method="post">
+                <legend>Edit Medium</legend>
+                <p>Edit the type of an existing medium.</p>
+                    
+                <label for="mediumID">Medium ID</label>
+                <input type="hidden" name="mediumID" id="mediumID" required>
+                    {% for medium in editMediumData %}
+                    <option value ="{{medium['mediumID']}}">{{medium['mediumID']}}</option>
+                    {% endfor %}
+                </select>
+
+                {% for medium in editMediumData %}
+                <label for="type">Medium Type: </label>
+                <input type="text" name="type" id = "type" value="{{medium['type']}}" required>
+                {% endfor %}
+            
+                <label for="editMedium">Submit</label>
+                <input type="submit" value="editMedium" name="editMedium">
+                </form>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+         
+         </article>
+        </section>
+    </main>
+</body>
+</html>

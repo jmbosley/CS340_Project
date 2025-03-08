@@ -19,11 +19,6 @@
       <a href="commissions" >Commissions</a>
       <a href="genres" >Genres</a>
       <a href="mediums" >Mediums</a>
-     <!--<a href="ArtistGenres.html" >ArtistGenres</a>
-      <a href="ArtistMediums.html" >ArtistMediums</a>
-      <a href="ArtistCommissions.html" >ArtistCommissions</a> -->
-      <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
-       <!--<a href="CommissionGenres.html" >CommissionGenres</a> -->
     </nav>   
 
     <main>
@@ -34,8 +29,8 @@
                 <table>
                     <thead>
                       <tr>
-                        <th>mediumID</th>
-                        <th>type</th>
+                        <th>Medium ID</th>
+                        <th>Type</th>
                         <th>Artist Count</th>
                         <th>Commission Count</th>
                         <th>Update</th>
@@ -44,89 +39,29 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>Oil Paint</td>
-                        <td>2</td>
-                        <td>2</td>
+                      
+                    {% for item in mediumTableDisplay %}
+                    <tr>
+                        <td>{{item['mediumID']}}</td>
+                        <td>{{item['type']}}</td>
+                        <td>{{item['artistCount']}}</td>
+                        <td>{{item['commissionCount']}}</td>
+                        
                         <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        <a href="editMedium/{{item.mediumID}}" class="btn btn-default">
+                        <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
+                        </a>
                         </td>
+
                         <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        <a href="deleteMedium/{{item.mediumID}}" class="btn btn-default">
+                        <button><i class="fa fa-trash" style="font-size:24px"></i></button>
+                        </a>
                         </td>
+                        						    
+                    </tr>
+                    {% endfor %}
 
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>Gouache</td>
-                        <td>0</td>
-                        <td>1</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-
-
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>Digital</td>
-                        <td>2</td>
-                        <td>2</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-
-
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td>Watercolor</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-
-
-                      </tr>
-                      <tr>
-                        <td>5</td>
-                        <td>Modern</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-
-
-                      </tr>
-                      <tr>
-                        <td>6</td>
-                        <td>Impressionism</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td class="edit">
-                          <button><i style="font-size:24px" class="fa">&#xf044;</i></button>
-                        </td>
-                        <td class="delete">
-                          <button><i class="fa fa-trash" style="font-size:24px"></i></button>
-                        </td>
-
-
-                      </tr>
                     </tbody>
                   </table>
             </article>
@@ -137,22 +72,16 @@
             <tbody>
               <tr>
                 <td>
-                  <form>
+
+                  <form id="addMedium" action="/mediums" method="post">
                     <legend>Add Medium</legend>
                     <p>Specify the name of the medium.</p>
                     <label for="type">Medium type: </label>
-                    <input type="text" id = "type" placeholder="Oil Paint" required>
-                    <input type="submit"/>
+                    <input type="text" id="type" name="type" placeholder="Steampunk" required>
+                    
+                    <input type="submit" value="Add Medium" name="insertMedium">
                   </form>
-                </td>
-                <td>
-                  <form>
-                    <legend>Edit Medium</legend>
-                    <p>Change the name of the medium.</p>
-                    <label for="type">Medium type: </label>
-                    <input type="text" id = "type" placeholder="Oil Paint" required>
-                    <input type="submit"/>
-                  </form>
+
                 </td>
               </tr>
             </tbody>
