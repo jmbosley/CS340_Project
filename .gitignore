@@ -2,3 +2,4 @@ notes.txt
 /.vscode
 venv
 __pycache__
+debug.log

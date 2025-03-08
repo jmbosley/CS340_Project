@@ -2,6 +2,13 @@ from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
 import os
+from datetime import datetime
+
+# taken from Flask debugging tutorial by Learning Software
+# https://www.youtube.com/watch?v=_Nq_n6Uk8WA&t=166s
+import sys
+import logging
+logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -119,6 +126,31 @@ def deleteCommission(commissionID):
 
 @app.route("/editCommission/<int:commissionID>", methods=["POST", "GET"])
 def editCommission(commissionID):
+    if request.method == "POST":
+       if request.form.get("editCommission"): # submit button pressed
+            artists = request.form["artists"]
+            customer = request.form["customer"]
+            genre = request.form["genre"]
+            medium = request.form["medium"]
+            requestStatus = request.form["requestStatus"]
+            dateRequested = request.form["dateRequested"]
+            dateCompleted = request.form["dateCompleted"]
+            price = request.form["price"]
+
+            # Update email, name only
+            query = ("UPDATE Customers SET email = %s, name = %s WHERE customerID = %s;")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (email, name, customerID))
+            mysql.connection.commit()
+            
+            # Update birthday
+            if birthday != "":
+                query = ("UPDATE Customers SET birthday = %s WHERE customerID = %s;")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (birthday, customerID))
+                mysql.connection.commit()
+            return redirect("/customers")
+
     if request.method == "GET":
         queryComission = "SELECT * FROM Commissions WHERE commissionID=%s;"
         cur = mysql.connection.cursor()
@@ -168,8 +200,59 @@ def editCommission(commissionID):
         cur = mysql.connection.cursor()
         cur.execute(querycurrArtist, (commissionID,))
         currArtistList = cur.fetchall()
+
+        querycurrCustomer = ("SELECT Commissions.customerID AS customerID, Customers.email AS email "
+                            "FROM Commissions "
+                            "LEFT JOIN Customers ON Customers.customerID = Commissions.customerID "
+                            "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrCustomer, (commissionID,))
+        currCustomerList = cur.fetchall()
+
+        # RequestStatus -----------------------------------------------------------
+        requestEnumValues = {"Request Unclaimed":1, "Request Claimed":2, "Request Complete":3, "Request Cancelled":4}
+        querycurrRequestStatus = ("SELECT Commissions.requestStatus as requestStatus "
+                                  "FROM Commissions "
+                                  "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrRequestStatus, (commissionID,))
+        currRequestStatus = cur.fetchall()[0]
+        # set back to enum int
+        currRequestStatus = requestEnumValues[currRequestStatus["requestStatus"]]
+
+        # dateRequested -----------------------------------------------------------
+        querycurrDateRequested = ("SELECT Commissions.dateRequested as dateRequested "
+                                "FROM Commissions "
+                                "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrDateRequested, (commissionID,))
+        # YYYY-MM-DDTHH:mm - source: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+        currDateRequested = cur.fetchall()[0]["dateRequested"].strftime("%Y-%m-%dT%H:%M")
+
+        # dateCompleted -----------------------------------------------------------
+        querycurrDateCompleted = ("SELECT Commissions.dateCompleted as dateCompleted "
+                                "FROM Commissions "
+                                "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrDateCompleted, (commissionID,))
+        currDateCompleted = cur.fetchall()[0]["dateCompleted"] # YYYY-MM-DD
+        if currDateCompleted is not None:
+            currDateCompleted = currDateCompleted.strftime("%Y-%m-%d")
+        app.logger.info(currDateCompleted)
+
+        # price -----------------------------------------------------------
+        querycurrPrice = ("SELECT Commissions.price as price "
+                        "FROM Commissions "
+                        "WHERE Commissions.commissionID = %s;")
+        cur = mysql.connection.cursor()
+        cur.execute(querycurrPrice, (commissionID,))
+        currPrice = cur.fetchall()[0]["price"] # YYYY-MM-DD
+        app.logger.info(currArtistList)
+        app.logger.info(artistDisplay)
         
-        return render_template("editCommission.j2", CommissionDisplay=CommissionDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, artistDisplay=artistDisplay, customerDisplay=customerDisplay, currGenreList=currGenreList, currMediumList=currMediumList, currArtistList=currArtistList)
+        return render_template("editCommission.j2", CommissionDisplay=CommissionDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, artistDisplay=artistDisplay, customerDisplay=customerDisplay, 
+                               currGenreList=currGenreList, currMediumList=currMediumList, currArtistList=currArtistList, currCustomerList=currCustomerList, currRequestStatus=currRequestStatus,
+                               currDateRequested=currDateRequested, currDateCompleted=currDateCompleted, currPrice=currPrice)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------Customers-------
 @app.route('/customers', methods=["POST", "GET"])
