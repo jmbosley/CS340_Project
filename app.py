@@ -798,7 +798,7 @@ def editArtist(artistID):
 if __name__ == "__main__":
 
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=59575, debug=True)
+    app.run(port=24813, debug=True)
 
     # 59575 
     # gunicorn -b 0.0.0.0:59576 -D app:app
