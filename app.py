@@ -13,9 +13,9 @@ logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_connelan'
-app.config['MYSQL_PASSWORD'] = '8248' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_connelan'
+app.config['MYSQL_USER'] = 'cs340_#####'
+app.config['MYSQL_PASSWORD'] = '####' #last 4 of onid
+app.config['MYSQL_DB'] = 'cs340_#####'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
