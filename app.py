@@ -1,7 +1,20 @@
 # Citation for app.py:
 # Date: 3/17/2025
 # Throughout the program, the CRUD operations/functions are based on the flask starter app.
+# We read the starter app to understand how to implement the operations, and then we wrote similar
+# code for our own database.
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+# Citation for logging (lines 26-28):
+# Date: 3/8/2025
+# The code for logging is copied from Learning Software's Flask debugging tutorial
+# Source URL: https://www.youtube.com/watch?v=_Nq_n6Uk8WA&t=166s
+
+# Citation for datetime usage (lines 337, 347):
+# Date: 3/8/2025
+# Usage of datetime's strftime in this function is inspired by Mozilla's datetime guide.
+# This guide was used to understand how html forms (that use dates) and SQL can interact.
+# Source URL: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
 
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
@@ -9,10 +22,7 @@ from flask import request
 import os
 from datetime import datetime
 
-# Citation for logging:
-# Date: 3/8/2025
-# The code for logging is inspired by Learning Software's Flask debugging tutorial
-# Source URL: https://www.youtube.com/watch?v=_Nq_n6Uk8WA&t=166s
+
 import sys
 import logging
 logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
@@ -323,11 +333,7 @@ def editCommission(commissionID):
                                 "WHERE Commissions.commissionID = %s;")
         cur = mysql.connection.cursor()
         cur.execute(querycurrDateRequested, (commissionID,))
-        
-        # Citation for datetime usage:
-        # Date: 3/8/2025
-        # Usage of datetime's strftime in this function is inspired by Mozilla's datetime guide.
-        # Source URL: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+    
         currDateRequested = cur.fetchall()[0]["dateRequested"].strftime("%Y-%m-%dT%H:%M") # YYYY-MM-DDTHH:mm
 
         # dateCompleted -----------------------------------------------------------
