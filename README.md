@@ -2,7 +2,7 @@
 
 Citation for app.py:
 Date: 3/17/2025
-Throughout the program, the CRUD operations of this program are adapted from the flask starter app.
+Throughout the program, the CRUD operations/functions are based on the flask starter app.
 Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 
 Citation for logging:
