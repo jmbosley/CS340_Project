@@ -1,11 +1,18 @@
+# Citation for app.py:
+# Date: 3/17/2025
+# The CRUD operations of this program are adapted from the flask starter app.
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
 import os
 from datetime import datetime
 
-# taken from Flask debugging tutorial by Learning Software
-# https://www.youtube.com/watch?v=_Nq_n6Uk8WA&t=166s
+# Citation for logging:
+# Date: 3/8/2025
+# The code for logging is inspired by Learning Software's Flask debugging tutorial
+# Source URL: https://www.youtube.com/watch?v=_Nq_n6Uk8WA&t=166s
 import sys
 import logging
 logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
@@ -136,9 +143,6 @@ def editCommission(commissionID):
             dateRequested = request.form["dateRequested"]
             dateCompleted = request.form["dateCompleted"]
             price = request.form["price"]
-
-            app.logger.info({"artists":artists, "genres":genres, "mediums":mediums, "customer":customer, "requestStatus":requestStatus, 
-                             "dateRequested":dateRequested, "dateCompleted":dateCompleted, "price":price})
 
             # update customer, requestStatus, dateRequested, price
             query = ("UPDATE Commissions SET customerID = %s, requestStatus = %s, dateRequested = %s, price = %s "
@@ -319,8 +323,12 @@ def editCommission(commissionID):
                                 "WHERE Commissions.commissionID = %s;")
         cur = mysql.connection.cursor()
         cur.execute(querycurrDateRequested, (commissionID,))
-        # YYYY-MM-DDTHH:mm - source: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
-        currDateRequested = cur.fetchall()[0]["dateRequested"].strftime("%Y-%m-%dT%H:%M")
+        
+        # Citation for datetime usage:
+        # Date: 3/8/2025
+        # Usage of datetime's strftime in this function is inspired by Mozilla's datetime guide.
+        # Source URL: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local
+        currDateRequested = cur.fetchall()[0]["dateRequested"].strftime("%Y-%m-%dT%H:%M") # YYYY-MM-DDTHH:mm
 
         # dateCompleted -----------------------------------------------------------
         querycurrDateCompleted = ("SELECT Commissions.dateCompleted as dateCompleted "
@@ -331,7 +339,6 @@ def editCommission(commissionID):
         currDateCompleted = cur.fetchall()[0]["dateCompleted"] # YYYY-MM-DD
         if currDateCompleted is not None:
             currDateCompleted = currDateCompleted.strftime("%Y-%m-%d")
-        app.logger.info(currDateCompleted)
 
         # price -----------------------------------------------------------
         querycurrPrice = ("SELECT Commissions.price as price "
@@ -340,8 +347,6 @@ def editCommission(commissionID):
         cur = mysql.connection.cursor()
         cur.execute(querycurrPrice, (commissionID,))
         currPrice = cur.fetchall()[0]["price"] # YYYY-MM-DD
-        app.logger.info(currArtistList)
-        app.logger.info(artistDisplay)
         
         return render_template("editCommission.j2", CommissionDisplay=CommissionDisplay, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, artistDisplay=artistDisplay, customerDisplay=customerDisplay, 
                                currGenreList=currGenreList, currMediumList=currMediumList, currArtistList=currArtistList, currCustomerList=currCustomerList, currRequestStatus=currRequestStatus,
@@ -710,8 +715,6 @@ def editArtist(artistID):
         cur.execute(querycurrMedium, (artistID,))
         currMediumList = cur.fetchall()
  
-      
-
         return render_template("editArtist.j2", editArtistData=editArtistData, genreDisplay=genreDisplay, mediumDisplay=mediumDisplay, currGenreList=currGenreList, currMediumList=currMediumList)
 
     if request.method == "POST":
@@ -743,20 +746,16 @@ def editArtist(artistID):
             # delete genres
             for currGenre in currGenreIDs:
                 if currGenre not in formGenres: # not selected on form, remove
-                    app.logger.info(currGenre)
                     currGenreIDsSave.remove(currGenre) # so we don't add it back later
                     query = ("DELETE FROM ArtistGenres WHERE genreID = %s AND artistID = %s; ")
                     cur.execute(query, (currGenre, artistID,))
                     mysql.connection.commit()
 
-            app.logger.info(currGenreIDs)
-            app.logger.info(currGenreIDsSave)
             currGenreIDs = currGenreIDsSave
 
             # add genres
             for currGenre in formGenres:
                 if currGenre not in currGenreIDs:
-                    app.logger.info(currGenre)
                     query = ("INSERT INTO ArtistGenres (artistID, genreID) VALUES(%s, %s); ")
                     cur = mysql.connection.cursor()
                     cur.execute(query, (artistID, currGenre))
@@ -797,8 +796,4 @@ def editArtist(artistID):
 # Listener
 if __name__ == "__main__":
 
-    #Start the app on port 3000, it will be different once hosted
     app.run(port=24813, debug=True)
-
-    # 59575 
-    # gunicorn -b 0.0.0.0:59576 -D app:app
