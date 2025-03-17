@@ -1,6 +1,6 @@
 # Citation for app.py:
 # Date: 3/17/2025
-# The CRUD operations of this program are adapted from the flask starter app.
+# Throughout the program, the CRUD operations of this program are adapted from the flask starter app.
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 
 from flask import Flask, render_template, json, redirect
@@ -20,9 +20,9 @@ logging.basicConfig(filename = "debug.log", level=logging.DEBUG)
 app = Flask(__name__, static_url_path='/static')
 
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_#####'
+app.config['MYSQL_USER'] = 'cs340_####'
 app.config['MYSQL_PASSWORD'] = '####' #last 4 of onid
-app.config['MYSQL_DB'] = 'cs340_#####'
+app.config['MYSQL_DB'] = 'cs340_####'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 
 
@@ -796,4 +796,4 @@ def editArtist(artistID):
 # Listener
 if __name__ == "__main__":
 
-    app.run(port=24813, debug=True)
+    app.run(port=59576, debug=True)
